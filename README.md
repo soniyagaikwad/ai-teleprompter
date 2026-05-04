@@ -11,7 +11,7 @@ A fast, speech-synced teleprompter for reading scripts out loud. Paste your scri
 - **Session controls**: start read-back, end session, and switch reading theme.
 - **Runs locally**: plain HTML/CSS/JS — no build step required.
 
-## Quick start
+## Quick Start
 
 ### 1) Run locally
 
@@ -25,7 +25,7 @@ python3 -m http.server 8000
 
 Then open `http://localhost:8000` in your browser.
 
-### 2) Use the app
+### 2) Use the App
 
 - **Paste or write** your script in the “Your script” box.
 - Click **Read back script**.
@@ -49,7 +49,7 @@ Then open `http://localhost:8000` in your browser.
 - **Nothing happens when starting**: confirm you’re not using a `file://` URL; run a local server as above.
 - **Recognition stops mid-session**: some browsers pause recognition after silence — try speaking a bit louder/closer to the mic, or restart the session.
 
-## Project layout
+## Project Layout
 
 - `index.html`: app shell + UI structure
 - `styles.css`: styling for editor + reading mode
