@@ -398,7 +398,6 @@ button {
   --roll-page-glow: #1c2830;
   --roll-toolbar-bg: #171c20;
   --roll-toolbar-border: rgba(200, 190, 180, 0.32);
-  --roll-pill-bg: rgba(18, 18, 20, 0.88);
   --roll-pill-border: rgba(190, 180, 170, 0.4);
   --roll-progress-chip-bg: #252b32;
   --roll-progress-fg: #e4cfae;
@@ -423,6 +422,14 @@ button {
   --roll-dot-on: #e8d4b4;
   --roll-dot-pulse: rgba(220, 200, 170, 0.28);
   --roll-dot-pulse-mid: rgba(220, 200, 170, 0.14);
+  --roll-stage-base: var(--roll-page-bg);
+  --roll-viewport-surface: linear-gradient(
+      165deg,
+      var(--roll-viewport-bg) 0%,
+      var(--roll-viewport-bg2) 100%
+    ),
+    var(--roll-viewport-bg2);
+  --roll-pill-bg: var(--roll-stage-base);
 
   display: flex;
   flex-direction: column;
@@ -445,7 +452,6 @@ button {
   --roll-fg-dim: color-mix(in srgb, var(--color-stone) 72%, var(--color-jet));
   --roll-toolbar-bg: color-mix(in srgb, white 72%, var(--color-cream));
   --roll-toolbar-border: color-mix(in srgb, var(--color-khaki) 55%, var(--color-jet));
-  --roll-pill-bg: color-mix(in srgb, white 88%, var(--color-cream));
   --roll-pill-border: color-mix(in srgb, var(--color-khaki) 50%, var(--color-jet));
   --roll-progress-chip-bg: color-mix(in srgb, white 78%, var(--color-cream));
   --roll-progress-fg: var(--color-jet);
@@ -474,6 +480,14 @@ button {
   --roll-dot-on: var(--color-khaki);
   --roll-dot-pulse: color-mix(in srgb, var(--color-khaki) 50%, transparent);
   --roll-dot-pulse-mid: color-mix(in srgb, var(--color-khaki) 28%, transparent);
+  --roll-stage-base: var(--color-cream);
+  --roll-viewport-surface: linear-gradient(
+      165deg,
+      var(--roll-viewport-bg) 0%,
+      var(--roll-viewport-bg2) 100%
+    ),
+    var(--roll-viewport-bg2);
+  --roll-pill-bg: var(--roll-stage-base);
 
   background:
     radial-gradient(
@@ -666,12 +680,7 @@ button {
   padding: 0 clamp(0.75rem, 3vw, 2.25rem) var(--roll-pad-y);
   border-radius: var(--radius-xl);
   border: 1px solid var(--roll-viewport-border);
-  background: linear-gradient(
-      165deg,
-      var(--roll-viewport-bg) 0%,
-      var(--roll-viewport-bg2) 100%
-    ),
-    var(--roll-viewport-bg2);
+  background: var(--roll-viewport-surface);
   box-shadow:
     0 24px 56px -36px var(--roll-viewport-shadow),
     inset 0 1px 0 var(--roll-viewport-inset);
