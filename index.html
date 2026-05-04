@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Use http://localhost (e.g. python3 -m http.server); file:// often blocks speech recognition. -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Teleprompter</title>
@@ -8,9 +9,103 @@
       name="description"
       content="Read your script with speech-synced scrolling."
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <a class="skip-link" href="#script-input">Skip to script</a>
+    <div id="app">
+      <div id="screen-editor" class="app-shell">
+        <main class="app-frame">
+          <header class="app-hero">
+            <p class="app-kicker">Speech-synced</p>
+            <h1 class="app-title">AI Teleprompter</h1>
+            <p class="app-lede">
+              Paste your script, start read-back, and speak. The prompter tracks
+              your speech — including light paraphrasing and short tangents — and
+              keeps the next lines in view so you can read comfortably.
+            </p>
+          </header>
+
+          <div class="app-card">
+            <div class="app-field-head">
+              <label class="app-label" for="script-input">Your script</label>
+              <span class="app-field-meta" id="word-count" aria-live="polite"></span>
+            </div>
+            <textarea
+              id="script-input"
+              class="app-textarea"
+              rows="12"
+              spellcheck="true"
+              placeholder="Write or paste your script here…"
+            ></textarea>
+
+            <p
+              id="banner-unsupported"
+              class="app-banner app-banner--warn"
+              hidden
+              role="status"
+            >
+              Speech recognition is not available in this browser. Try Chrome or
+              Edge on desktop.
+            </p>
+
+            <p id="banner-error" class="app-banner app-banner--error" hidden role="status"></p>
+
+            <footer class="app-footer">
+              <button
+                type="button"
+                id="btn-read"
+                class="app-primary"
+                aria-describedby="btn-read-hint"
+              >
+                <span class="app-primary-icon" aria-hidden="true"></span>
+                Read back script
+              </button>
+              <p id="btn-read-hint" class="app-primary-hint">
+                Uses your microphone · works best in Chrome or Edge on desktop
+              </p>
+            </footer>
+          </div>
+        </main>
+      </div>
+
+      <div id="screen-roll" class="roll-root" hidden>
+        <header class="roll-toolbar">
+          <div class="roll-status-pill" role="status">
+            <span id="roll-dot" class="roll-dot" aria-hidden="true"></span>
+            <span id="roll-status-text" class="roll-status-text">Paused</span>
+            <span class="roll-progress-wrap">
+              <span id="roll-progress" class="roll-progress" aria-live="polite"></span>
+            </span>
+          </div>
+          <button type="button" id="btn-end" class="roll-stop">End session</button>
+        </header>
+
+        <div class="roll-stage">
+          <div
+            id="roll-viewport"
+            class="roll-viewport"
+            aria-label="Teleprompter text"
+          >
+            <div class="roll-read-zone" aria-hidden="true"></div>
+            <div class="roll-read-rail" aria-hidden="true"></div>
+            <div id="roll-scroll" class="roll-scroll"></div>
+          </div>
+        </div>
+
+        <p class="roll-hint">
+          Read at a natural pace. Short ad-libs are skipped until the script
+          matches again. Scroll stays instant so upcoming words stay visible.
+        </p>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
   </body>
 </html>
