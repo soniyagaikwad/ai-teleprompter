@@ -20,9 +20,50 @@
   <body>
     <a class="skip-link" href="#script-input">Skip to script</a>
     <div id="app">
+      <svg
+        class="app-mark-sprite"
+        aria-hidden="true"
+        focusable="false"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <symbol id="app-mark-glyph" viewBox="0 0 120 32">
+            <g
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="24" y1="12" x2="24" y2="28" />
+              <line x1="32" y1="16" x2="32" y2="24" />
+              <line x1="40" y1="14" x2="40" y2="26" />
+              <line x1="48" y1="18" x2="48" y2="22" />
+              <ellipse cx="60" cy="12" rx="6" ry="8" />
+              <line x1="60" y1="20" x2="60" y2="25" />
+              <path d="M54 25q6 3 12 0" />
+              <line x1="72" y1="18" x2="72" y2="22" />
+              <line x1="80" y1="14" x2="80" y2="26" />
+              <line x1="88" y1="16" x2="88" y2="24" />
+              <line x1="96" y1="12" x2="96" y2="28" />
+            </g>
+          </symbol>
+        </defs>
+      </svg>
       <div id="screen-editor" class="app-shell">
         <main class="app-frame">
           <header class="app-hero">
+            <div class="app-hero-mark" aria-hidden="true">
+              <svg
+                class="app-hero-svg"
+                viewBox="0 0 120 32"
+                width="120"
+                height="32"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <use href="#app-mark-glyph" />
+              </svg>
+            </div>
             <p class="app-kicker">Speech-synced</p>
             <h1 class="app-title">AI Teleprompter</h1>
             <p class="app-lede">
@@ -77,12 +118,25 @@
 
       <div id="screen-roll" class="roll-root" hidden>
         <header class="roll-toolbar">
-          <div class="roll-status-pill" role="status">
-            <span id="roll-dot" class="roll-dot" aria-hidden="true"></span>
-            <span id="roll-status-text" class="roll-status-text">Paused</span>
-            <span class="roll-progress-wrap">
-              <span id="roll-progress" class="roll-progress" aria-live="polite"></span>
-            </span>
+          <div class="roll-toolbar-start">
+            <div class="roll-status-pill" role="status">
+              <span id="roll-dot" class="roll-dot" aria-hidden="true"></span>
+              <span id="roll-status-text" class="roll-status-text">Paused</span>
+              <span class="roll-progress-wrap">
+                <span id="roll-progress" class="roll-progress" aria-live="polite"></span>
+              </span>
+            </div>
+          </div>
+          <div class="roll-toolbar-brand" aria-hidden="true">
+            <svg
+              class="roll-toolbar-mark-svg"
+              viewBox="0 0 120 32"
+              width="120"
+              height="32"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <use href="#app-mark-glyph" />
+            </svg>
           </div>
           <div class="roll-toolbar-actions">
             <button

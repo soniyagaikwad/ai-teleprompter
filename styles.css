@@ -143,6 +143,13 @@ button {
   outline-offset: 2px;
 }
 
+.app-mark-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
 .app-shell {
   /* 100dvh avoids a % min-height cycle with the flex parent when content is taller than the viewport */
   min-height: 100dvh;
@@ -165,6 +172,20 @@ button {
   text-align: center;
   max-width: 38rem;
   margin: 0 auto;
+}
+
+.app-hero-mark {
+  display: flex;
+  justify-content: center;
+  margin-bottom: clamp(0.55rem, 1.4vw, 0.75rem);
+}
+
+.app-hero-svg {
+  display: block;
+  width: clamp(3.1rem, 7.5vw, 3.65rem);
+  height: auto;
+  color: color-mix(in srgb, var(--color-stone) 52%, var(--color-khaki));
+  opacity: 0.78;
 }
 
 .app-kicker {
@@ -398,6 +419,8 @@ button {
   --roll-page-glow: #1c2830;
   --roll-toolbar-bg: #171c20;
   --roll-toolbar-border: rgba(200, 190, 180, 0.32);
+  /* Toolbar mark: warm line art, visible on charcoal bar */
+  --roll-toolbar-mark-color: color-mix(in srgb, var(--roll-fg-dim) 32%, var(--roll-fg));
   --roll-pill-border: rgba(190, 180, 170, 0.4);
   --roll-progress-chip-bg: #252b32;
   --roll-progress-fg: #e4cfae;
@@ -452,6 +475,8 @@ button {
   --roll-fg-dim: color-mix(in srgb, var(--color-stone) 72%, var(--color-jet));
   --roll-toolbar-bg: color-mix(in srgb, white 72%, var(--color-cream));
   --roll-toolbar-border: color-mix(in srgb, var(--color-khaki) 55%, var(--color-jet));
+  /* Match home hero mark on cream toolbar */
+  --roll-toolbar-mark-color: color-mix(in srgb, var(--color-stone) 52%, var(--color-khaki));
   --roll-pill-border: color-mix(in srgb, var(--color-khaki) 50%, var(--color-jet));
   --roll-progress-chip-bg: color-mix(in srgb, white 78%, var(--color-cream));
   --roll-progress-fg: var(--color-jet);
@@ -506,8 +531,7 @@ button {
 .roll-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
   padding: calc(0.85rem + env(safe-area-inset-top, 0px))
     clamp(1rem, 4vw, 1.5rem) 0.85rem;
   padding-left: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-left, 0px));
@@ -519,12 +543,41 @@ button {
   flex-shrink: 0;
 }
 
+.roll-toolbar-start {
+  flex: 1 1 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  min-width: 0;
+}
+
+.roll-toolbar-brand {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.roll-toolbar-mark-svg {
+  display: block;
+  width: clamp(3.05rem, 7.4vw, 3.85rem);
+  height: auto;
+  color: var(--roll-toolbar-mark-color);
+  opacity: 0.86;
+}
+
+.roll-root.roll-root--light .roll-toolbar-mark-svg {
+  opacity: 0.78;
+}
+
 .roll-toolbar-actions {
+  flex: 1 1 0;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   flex-wrap: wrap;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .roll-status-pill {
