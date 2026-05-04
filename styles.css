@@ -786,21 +786,51 @@ button {
   display: inline-block;
   flex: 0 0 auto;
   white-space: nowrap;
-  transition: color 0.12s ease, opacity 0.12s ease, transform 0.12s ease;
+  position: relative;
+  transition:
+    color 0.28s cubic-bezier(0.33, 0, 0.2, 1),
+    opacity 0.28s cubic-bezier(0.33, 0, 0.2, 1),
+    text-shadow 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.roll-word::after {
+  content: "";
+  position: absolute;
+  left: -0.14em;
+  right: -0.14em;
+  bottom: -0.14em;
+  height: 0.12em;
+  border-radius: 999px;
+  background: transparent;
+  opacity: 0;
+  transform: translateY(1px);
+  transition:
+    opacity 0.22s cubic-bezier(0.33, 0, 0.2, 1),
+    transform 0.22s cubic-bezier(0.33, 0, 0.2, 1),
+    background-color 0.22s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
 .roll-word--past {
   color: var(--roll-word-past);
+  opacity: 0.93;
 }
 
 .roll-word--here {
   color: var(--roll-word-here);
-  font-weight: 600;
+  font-weight: 500;
+  opacity: 1;
   text-shadow: 0 0 16px var(--roll-here-glow);
+}
+
+.roll-word--here::after {
+  opacity: 0.82;
+  transform: translateY(0);
+  background: var(--roll-here-glow);
 }
 
 .roll-word--ahead {
   color: var(--roll-word-ahead);
+  opacity: 0.97;
 }
 
 .roll-root.roll-root--light .roll-word--here {
@@ -809,6 +839,11 @@ button {
     0 0 22px var(--roll-here-glow),
     0 0 40px var(--roll-here-glow-soft),
     0 0 64px var(--roll-here-glow-faint);
+}
+
+.roll-root.roll-root--light .roll-word--here::after {
+  opacity: 0.78;
+  background: var(--roll-here-glow);
 }
 
 @media (max-width: 520px) {

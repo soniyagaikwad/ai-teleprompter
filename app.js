@@ -6,6 +6,45 @@
   /** Last aligned script cursor (index of “here” word); stabilizes ties in tail DP. */
   let rollSpeechCursorHint = 0;
 
+  let rollScrollTargetTop = null;
+  let rollScrollRafId = 0;
+  let rollLastMatchedCount = -1;
+  let rollLastFocusLineIndex = -1;
+
+  function prefersRollReducedMotion() {
+    try {
+      return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function cancelRollScrollAnimation() {
+    if (rollScrollRafId) {
+      cancelAnimationFrame(rollScrollRafId);
+      rollScrollRafId = 0;
+    }
+    rollScrollTargetTop = null;
+  }
+
+  function tickRollScroll() {
+    const view = el.rollViewport;
+    if (!view || rollScrollTargetTop == null) {
+      rollScrollRafId = 0;
+      return;
+    }
+    const target = rollScrollTargetTop;
+    const cur = view.scrollTop;
+    const d = target - cur;
+    if (Math.abs(d) < 0.65) {
+      view.scrollTop = target;
+      rollScrollRafId = 0;
+      return;
+    }
+    view.scrollTop = cur + d * 0.19;
+    rollScrollRafId = requestAnimationFrame(tickRollScroll);
+  }
+
   /** Recent transcript tokens aligned to script (handles ad-libs, skips, jump-back). */
   const TAIL_ALIGN_LEN = 96;
   const MATCH_SCORE = 6;
@@ -378,7 +417,10 @@
   }
 
   function renderRoll(words) {
+    cancelRollScrollAnimation();
     rollSpeechCursorHint = 0;
+    rollLastMatchedCount = -1;
+    rollLastFocusLineIndex = -1;
     sessionWords = words;
     wordSpans = [];
     lineEls = [];
@@ -416,8 +458,14 @@
     const lineRect = lineEl.getBoundingClientRect();
     const viewRect = view.getBoundingClientRect();
     const delta = lineRect.top - viewRect.top - readBand;
-    const next = view.scrollTop + delta;
-    view.scrollTop = Math.max(0, next);
+    const next = Math.max(0, view.scrollTop + delta);
+    if (prefersRollReducedMotion()) {
+      view.scrollTop = next;
+      cancelRollScrollAnimation();
+      return;
+    }
+    rollScrollTargetTop = next;
+    if (!rollScrollRafId) rollScrollRafId = requestAnimationFrame(tickRollScroll);
   }
 
   function updateRollUI(transcript) {
@@ -430,12 +478,30 @@
     );
     rollSpeechCursorHint = matchedCount;
 
-    for (let i = 0; i < wordSpans.length; i++) {
-      const span = wordSpans[i];
-      if (!span) continue;
-      const state =
-        i < matchedCount ? "past" : i === matchedCount ? "here" : "ahead";
-      span.className = "roll-word roll-word--" + state;
+    if (rollLastMatchedCount !== matchedCount) {
+      const last = rollLastMatchedCount;
+      const n = wordSpans.length;
+
+      if (last >= 0 && last < n && wordSpans[last]) {
+        wordSpans[last].className =
+          "roll-word roll-word--" + (last < matchedCount ? "past" : "ahead");
+      }
+
+      const a = Math.max(0, Math.min(last, matchedCount));
+      const b = Math.max(0, Math.max(last, matchedCount));
+      for (let i = a; i < b; i++) {
+        if (i === matchedCount) continue;
+        const span = wordSpans[i];
+        if (!span) continue;
+        span.className =
+          "roll-word roll-word--" + (i < matchedCount ? "past" : "ahead");
+      }
+
+      if (matchedCount >= 0 && matchedCount < n && wordSpans[matchedCount]) {
+        wordSpans[matchedCount].className = "roll-word roll-word--here";
+      }
+
+      rollLastMatchedCount = matchedCount;
     }
 
     if (sessionWords.length) {
@@ -459,7 +525,10 @@
             ),
             linesLen - 1
           );
-    scrollToFocus(focusLineIndex);
+    if (focusLineIndex !== rollLastFocusLineIndex) {
+      scrollToFocus(focusLineIndex);
+      rollLastFocusLineIndex = focusLineIndex;
+    }
   }
 
   function setRollListening(listening) {
@@ -485,6 +554,7 @@
       setRollListening(on);
     };
     speech.onError = function (err) {
+      cancelRollScrollAnimation();
       speech.stop();
       setRollListening(false);
       document.body.classList.remove("mode-roll");
@@ -506,6 +576,7 @@
       });
     });
     if (!speech.start()) {
+      cancelRollScrollAnimation();
       document.body.classList.remove("mode-roll");
       el.screenRoll.hidden = true;
       el.screenEditor.hidden = false;
@@ -514,6 +585,7 @@
   }
 
   function endRoll() {
+    cancelRollScrollAnimation();
     speech.stop();
     speech.onTranscript = function () {};
     speech.onError = function () {};
