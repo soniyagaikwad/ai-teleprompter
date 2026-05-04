@@ -440,38 +440,53 @@ button {
 
 .roll-root.roll-root--light {
   color-scheme: light;
-  --roll-fg: #121820;
-  --roll-fg-dim: #4a5563;
-  --roll-fg-current: #5c3000;
-  --roll-page-bg: #e6e2da;
-  --roll-page-glow: #d8d3c9;
-  --roll-toolbar-bg: #dcd6ce;
-  --roll-toolbar-border: rgba(70, 65, 58, 0.28);
-  --roll-pill-bg: #f2efe9;
-  --roll-pill-border: rgba(60, 55, 50, 0.35);
-  --roll-progress-chip-bg: #e0dbd4;
-  --roll-progress-fg: #3d2808;
-  --roll-btn-fg: #101418;
-  --roll-btn-bg: #f4f1ec;
-  --roll-btn-border: rgba(55, 50, 45, 0.45);
-  --roll-btn-hover-bg: #e8e3dc;
-  --roll-btn-hover-border: rgba(55, 50, 45, 0.55);
-  --roll-viewport-bg: #faf9f7;
-  --roll-viewport-bg2: #f0ebe4;
-  --roll-viewport-border: rgba(55, 50, 45, 0.22);
-  --roll-viewport-inset: rgba(255, 255, 255, 0.65);
-  --roll-viewport-shadow: rgba(0, 0, 0, 0.12);
-  --roll-scrollbar-thumb: rgba(70, 65, 58, 0.38);
-  --roll-scrollbar-track: rgba(230, 226, 218, 0.9);
+  /* Match home / editor: same cream, jet, stone, khaki tokens + card + textarea + primary button */
+  --roll-fg: var(--color-jet);
+  --roll-fg-dim: color-mix(in srgb, var(--color-stone) 72%, var(--color-jet));
+  --roll-toolbar-bg: color-mix(in srgb, white 72%, var(--color-cream));
+  --roll-toolbar-border: color-mix(in srgb, var(--color-khaki) 55%, var(--color-jet));
+  --roll-pill-bg: color-mix(in srgb, white 88%, var(--color-cream));
+  --roll-pill-border: color-mix(in srgb, var(--color-khaki) 50%, var(--color-jet));
+  --roll-progress-chip-bg: color-mix(in srgb, white 78%, var(--color-cream));
+  --roll-progress-fg: var(--color-jet);
+  --roll-btn-fg: var(--color-cream);
+  --roll-btn-bg: var(--color-stone);
+  --roll-btn-border: color-mix(in srgb, var(--color-stone) 82%, var(--color-black));
+  --roll-btn-hover-bg: color-mix(in srgb, var(--color-stone) 78%, var(--color-black));
+  --roll-btn-hover-border: color-mix(in srgb, var(--color-stone) 68%, var(--color-black));
+  --roll-viewport-bg: color-mix(in srgb, white 88%, var(--color-cream));
+  --roll-viewport-bg2: color-mix(in srgb, white 80%, var(--color-cream));
+  --roll-viewport-border: color-mix(in srgb, var(--color-khaki) 50%, var(--color-jet));
+  --roll-viewport-inset: rgba(255, 255, 255, 0.8);
+  --roll-viewport-shadow: color-mix(in srgb, var(--color-jet) 10%, transparent);
+  --roll-scrollbar-thumb: color-mix(in srgb, var(--color-stone) 45%, transparent);
+  --roll-scrollbar-track: color-mix(in srgb, white 65%, var(--color-cream));
   --roll-word-ahead: var(--roll-fg);
   --roll-word-past: var(--roll-fg-dim);
+  /* Rich warm brown so it pops like khaki on dark; still WCAG on cream panel */
+  --roll-fg-current: color-mix(in srgb, var(--color-stone) 28%, var(--color-black));
   --roll-word-here: var(--roll-fg-current);
-  --roll-here-glow: rgba(120, 70, 20, 0.18);
-  --roll-focus-ring: #1a4480;
-  --roll-dot-off: #6b6560;
-  --roll-dot-on: #8a4a08;
-  --roll-dot-pulse: rgba(138, 74, 8, 0.28);
-  --roll-dot-pulse-mid: rgba(138, 74, 8, 0.12);
+  --roll-here-glow: color-mix(in srgb, var(--color-khaki) 62%, transparent);
+  --roll-here-glow-soft: color-mix(in srgb, var(--color-khaki) 38%, transparent);
+  --roll-here-glow-faint: color-mix(in srgb, var(--color-khaki) 18%, transparent);
+  --roll-focus-ring: var(--color-jet);
+  --roll-dot-off: color-mix(in srgb, var(--color-stone) 88%, var(--color-jet));
+  --roll-dot-on: var(--color-khaki);
+  --roll-dot-pulse: color-mix(in srgb, var(--color-khaki) 50%, transparent);
+  --roll-dot-pulse-mid: color-mix(in srgb, var(--color-khaki) 28%, transparent);
+
+  background:
+    radial-gradient(
+      120% 80% at 50% -20%,
+      color-mix(in srgb, white 70%, var(--color-cream)) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 90% 60% at 100% 100%,
+      color-mix(in srgb, var(--color-khaki) 22%, transparent) 0%,
+      transparent 50%
+    ),
+    var(--color-cream);
 }
 
 .roll-toolbar {
@@ -612,32 +627,32 @@ button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0.2rem max(clamp(0.5rem, 2.5vw, 1.75rem), env(safe-area-inset-left, 0px))
-    max(0.35rem, env(safe-area-inset-bottom, 0px))
-    max(clamp(0.5rem, 2.5vw, 1.75rem), env(safe-area-inset-right, 0px));
+  padding: 0.05rem max(clamp(0.45rem, 2.2vw, 1.5rem), env(safe-area-inset-left, 0px))
+    max(0.2rem, env(safe-area-inset-bottom, 0px))
+    max(clamp(0.45rem, 2.2vw, 1.5rem), env(safe-area-inset-right, 0px));
 }
 
 .roll-viewport {
-  /* README: ~5 words/line (JS), at most 4 lines visible — grow type until that window fills the viewport */
-  --roll-lh: 1.18;
-  --roll-line-gap: 0.32rem;
-  --roll-pad-y: 0.5rem;
-  /* Toolbar + stage padding + slack for wrapped toolbar on small screens */
-  --roll-chrome-y: calc(6.35rem + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
+  /* README: ~5 words/line (app.js WORDS_PER_LINE), at most 4 lines visible (max-height below) */
+  --roll-lh: 1.14;
+  --roll-line-gap: 0.24rem;
+  --roll-pad-y: 0.4rem;
+  /* Toolbar + stage padding; keep tight so --roll-fs-fit can use vertical space for larger type */
+  --roll-chrome-y: calc(5.95rem + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
   --roll-fs-fit: max(
-    1.52rem,
+    1.58rem,
     calc(
       (100dvh - var(--roll-chrome-y) - 2 * var(--roll-pad-y) - 3 * var(--roll-line-gap)) /
         (4 * var(--roll-lh))
     )
   );
-  /* Slightly larger than before; min(..., fit) keeps four lines on-screen without maxing every dvh */
+  /* Cap still bounded by fit so four lines never exceed the viewport */
   --roll-fs: min(
-    clamp(1.65rem, min(7.8vw, 1.16rem + 3.25vmin), 5.95rem),
+    clamp(1.72rem, min(9.5vw, 1.22rem + 4.5vmin), 7.35rem),
     var(--roll-fs-fit)
   );
   position: relative;
-  width: min(100%, 68rem);
+  width: min(100%, 80rem);
   flex: 0 0 auto;
   /* README: at most ~4 lines visible */
   max-height: calc(
@@ -648,7 +663,7 @@ button {
   overflow-x: auto;
   scroll-behavior: auto;
   scrollbar-color: var(--roll-scrollbar-thumb) var(--roll-scrollbar-track);
-  padding: 0 clamp(0.85rem, 3.5vw, 2rem) var(--roll-pad-y);
+  padding: 0 clamp(0.75rem, 3vw, 2.25rem) var(--roll-pad-y);
   border-radius: var(--radius-xl);
   border: 1px solid var(--roll-viewport-border);
   background: linear-gradient(
@@ -669,6 +684,11 @@ button {
   );
 }
 
+.roll-root.roll-root--light .roll-viewport {
+  /* Same depth as .app-card + .app-textarea feel */
+  box-shadow: var(--shadow-card), inset 0 1px 0 var(--roll-viewport-inset);
+}
+
 .roll-viewport:focus {
   outline: none;
 }
@@ -684,7 +704,7 @@ button {
   align-items: stretch;
   gap: var(--roll-line-gap);
   padding-top: var(--roll-pad-y);
-  padding-bottom: min(10vh, 4.5rem);
+  padding-bottom: min(8vh, 3.75rem);
 }
 
 .roll-line {
@@ -721,6 +741,14 @@ button {
   color: var(--roll-word-ahead);
 }
 
+.roll-root.roll-root--light .roll-word--here {
+  text-shadow:
+    0 0 10px var(--roll-here-glow),
+    0 0 22px var(--roll-here-glow),
+    0 0 40px var(--roll-here-glow-soft),
+    0 0 64px var(--roll-here-glow-faint);
+}
+
 @media (max-width: 520px) {
   .roll-toolbar {
     flex-wrap: wrap;
@@ -740,7 +768,7 @@ button {
 
   .roll-viewport {
     --roll-chrome-y: calc(
-      9.25rem + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)
+      9rem + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)
     );
   }
 
