@@ -349,6 +349,85 @@
   let lineEls = [];
   let sessionLineStarts = [];
 
+  let rollFontFitRaf = 0;
+  let rollViewportResizeObserver = null;
+
+  /** Shrink --roll-fs only when needed so ~5 words/line (nowrap) never clip horizontally. */
+  function clearRollFontWidthCap() {
+    if (el.rollViewport) {
+      el.rollViewport.style.removeProperty("--roll-fs-max-by-width");
+    }
+  }
+
+  function fitRollFontToViewportWidth() {
+    const view = el.rollViewport;
+    if (!view || lineEls.length === 0) return;
+    if (!document.body.classList.contains("mode-roll")) return;
+    if (view.clientWidth < 48) return;
+
+    const cs = getComputedStyle(view);
+    const padX =
+      (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+    const available = Math.max(40, view.clientWidth - padX - 8);
+
+    view.style.removeProperty("--roll-fs-max-by-width");
+    void view.offsetWidth;
+
+    let maxLine = 0;
+    for (let i = 0; i < lineEls.length; i++) {
+      const w = lineEls[i].scrollWidth;
+      if (w > maxLine) maxLine = w;
+    }
+
+    if (maxLine <= available) {
+      view.style.removeProperty("--roll-fs-max-by-width");
+      return;
+    }
+
+    const fs = parseFloat(getComputedStyle(lineEls[0]).fontSize) || 16;
+    const ratio = available / maxLine;
+    const minPx = 14;
+    view.style.setProperty(
+      "--roll-fs-max-by-width",
+      Math.max(minPx, fs * ratio * 0.985) + "px"
+    );
+
+    void view.offsetWidth;
+    let maxLine2 = 0;
+    for (let j = 0; j < lineEls.length; j++) {
+      const w2 = lineEls[j].scrollWidth;
+      if (w2 > maxLine2) maxLine2 = w2;
+    }
+    if (maxLine2 > available) {
+      const fs2 = parseFloat(getComputedStyle(lineEls[0]).fontSize) || minPx;
+      view.style.setProperty(
+        "--roll-fs-max-by-width",
+        Math.max(minPx, fs2 * (available / maxLine2) * 0.985) + "px"
+      );
+    }
+  }
+
+  function scheduleRollFontFit() {
+    if (rollFontFitRaf) cancelAnimationFrame(rollFontFitRaf);
+    rollFontFitRaf = requestAnimationFrame(function () {
+      rollFontFitRaf = 0;
+      fitRollFontToViewportWidth();
+      requestAnimationFrame(fitRollFontToViewportWidth);
+    });
+  }
+
+  function initRollViewportResizeObserver() {
+    if (!window.ResizeObserver || !el.rollViewport || rollViewportResizeObserver) {
+      return;
+    }
+    rollViewportResizeObserver = new ResizeObserver(function () {
+      if (document.body.classList.contains("mode-roll")) {
+        scheduleRollFontFit();
+      }
+    });
+    rollViewportResizeObserver.observe(el.rollViewport);
+  }
+
   function getStoredRollTheme() {
     try {
       const v = localStorage.getItem(ROLL_THEME_KEY);
@@ -565,8 +644,10 @@
     };
 
     requestAnimationFrame(function () {
+      scheduleRollFontFit();
       updateRollUI("");
       requestAnimationFrame(function () {
+        scheduleRollFontFit();
         updateRollUI("");
         try {
           el.rollViewport.focus({ preventScroll: true });
@@ -578,6 +659,7 @@
     if (!speech.start()) {
       cancelRollScrollAnimation();
       document.body.classList.remove("mode-roll");
+      clearRollFontWidthCap();
       el.screenRoll.hidden = true;
       el.screenEditor.hidden = false;
       setEditorError("Could not start microphone");
@@ -590,6 +672,7 @@
     speech.onTranscript = function () {};
     speech.onError = function () {};
     document.body.classList.remove("mode-roll");
+    clearRollFontWidthCap();
     el.screenRoll.hidden = true;
     el.screenEditor.hidden = false;
     updateReadButton();
@@ -606,6 +689,27 @@
     speech.onError = function () {};
 
     applyRollTheme(getStoredRollTheme());
+    initRollViewportResizeObserver();
+    window.addEventListener(
+      "resize",
+      function () {
+        if (document.body.classList.contains("mode-roll")) {
+          scheduleRollFontFit();
+        }
+      },
+      { passive: true }
+    );
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener(
+        "resize",
+        function () {
+          if (document.body.classList.contains("mode-roll")) {
+            scheduleRollFontFit();
+          }
+        },
+        { passive: true }
+      );
+    }
     el.btnRead.addEventListener("click", beginRoll);
     if (el.btnRollTheme) {
       el.btnRollTheme.addEventListener("click", toggleRollTheme);

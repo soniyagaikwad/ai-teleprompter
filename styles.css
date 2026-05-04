@@ -690,6 +690,7 @@ button {
 .roll-stage {
   flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -701,6 +702,8 @@ button {
 
 .roll-viewport {
   /* README: ~5 words/line (app.js WORDS_PER_LINE), at most 4 lines visible (max-height below) */
+  /* app.js may set --roll-fs-max-by-width (px) so the longest line fits without clipping */
+  --roll-fs-max-by-width: 999rem;
   --roll-lh: 1.14;
   --roll-line-gap: 0.24rem;
   --roll-pad-y: 0.4rem;
@@ -713,13 +716,19 @@ button {
         (4 * var(--roll-lh))
     )
   );
-  /* Cap still bounded by fit so four lines never exceed the viewport */
-  --roll-fs: min(
+  /* Typographic cap from viewport; final size also limited by measured line width (see app.js) */
+  --roll-fs-uncapped: min(
     clamp(1.72rem, min(9.5vw, 1.22rem + 4.5vmin), 7.35rem),
     var(--roll-fs-fit)
   );
+  --roll-fs: min(var(--roll-fs-uncapped), var(--roll-fs-max-by-width));
+  /* Size font relative to this panel when supported — avoids mismatch vs full-window vw */
+  container-type: inline-size;
+  container-name: rollvp;
   position: relative;
   width: min(100%, 80rem);
+  min-width: 0;
+  max-width: 100%;
   flex: 0 0 auto;
   /* README: at most ~4 lines visible */
   max-height: calc(
@@ -740,8 +749,8 @@ button {
   mask-image: linear-gradient(
     to bottom,
     transparent,
-    black 3%,
-    black 97%,
+    black 1.5%,
+    black 98.5%,
     transparent
   );
 }
@@ -776,6 +785,7 @@ button {
   justify-content: center;
   gap: 0.38em 0.5em;
   margin: 0;
+  min-width: 0;
   font-size: var(--roll-fs);
   line-height: var(--roll-lh);
   font-weight: 500;
