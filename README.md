@@ -55,6 +55,6 @@ Then open `http://localhost:8000` in your browser.
 - `styles.css`: styling for editor + reading mode
 - `app.js`: app logic (speech recognition + scrolling/highlighting)
 
-## Specs / original prompt
+## Specs
 
 The original product spec is preserved in `ai-teleprompter-specs.md`.
