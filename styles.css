@@ -398,8 +398,13 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.85rem clamp(1rem, 4vw, 1.5rem);
-  background: color-mix(in srgb, var(--color-jet) 92%, black);
+  padding: calc(0.85rem + env(safe-area-inset-top, 0px))
+    clamp(1rem, 4vw, 1.5rem) 0.85rem;
+  padding-left: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-right, 0px));
+  background: color-mix(in srgb, var(--color-jet) 88%, black);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid color-mix(in srgb, var(--color-stone) 55%, transparent);
   flex-shrink: 0;
 }
@@ -460,20 +465,25 @@ button {
 
 .roll-stop {
   cursor: pointer;
-  border: 1px solid color-mix(in srgb, var(--color-khaki) 45%, var(--color-stone));
-  border-radius: var(--radius-md);
-  padding: 0.55rem 1.05rem;
-  font-size: 0.88rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--color-stone) 55%, transparent);
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+  min-height: 2.75rem;
+  font-size: 0.84rem;
   font-weight: 600;
-  color: var(--color-cream);
-  background: transparent;
+  color: color-mix(in srgb, var(--color-cream) 88%, var(--color-stone));
+  background: color-mix(in srgb, var(--color-black) 28%, transparent);
   transition: background var(--dur) var(--ease-out),
     border-color var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
 }
 
 .roll-stop:hover {
-  background: color-mix(in srgb, var(--color-stone) 35%, transparent);
-  border-color: color-mix(in srgb, var(--color-khaki) 65%, var(--color-stone));
+  background: color-mix(in srgb, var(--color-stone) 28%, transparent);
+  border-color: color-mix(in srgb, var(--color-khaki) 42%, var(--color-stone));
+  color: var(--color-cream);
 }
 
 .roll-stop:focus-visible {
@@ -488,88 +498,147 @@ button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0.65rem 0 0.85rem;
+  padding: 0.65rem max(0.75rem, env(safe-area-inset-left, 0px)) 0.85rem
+    max(0.75rem, env(safe-area-inset-right, 0px));
 }
 
 .roll-read-zone {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 28%;
-  height: 22%;
+  inset-inline: clamp(0.75rem, 3vw, 1.25rem);
+  top: 30%;
+  height: 24%;
+  border-radius: var(--radius-md);
   background: linear-gradient(
     180deg,
-    transparent,
-    color-mix(in srgb, var(--color-khaki) 6%, transparent),
-    transparent
+    color-mix(in srgb, var(--color-khaki) 4%, transparent),
+    color-mix(in srgb, var(--color-khaki) 10%, transparent) 50%,
+    color-mix(in srgb, var(--color-khaki) 4%, transparent)
   );
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-khaki) 14%, transparent);
   pointer-events: none;
   z-index: 1;
-  border-radius: var(--radius-sm);
 }
 
 .roll-read-rail {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 36%;
-  height: 2px;
+  left: 50%;
+  top: 38%;
+  transform: translate(-50%, -50%);
+  width: min(32rem, 82%);
+  height: 3px;
+  border-radius: 999px;
   background: linear-gradient(
     90deg,
-    transparent,
-    var(--color-khaki) 10%,
-    var(--color-khaki) 90%,
-    transparent
+    transparent 0%,
+    color-mix(in srgb, var(--color-khaki) 35%, transparent) 12%,
+    var(--color-khaki) 50%,
+    color-mix(in srgb, var(--color-khaki) 35%, transparent) 88%,
+    transparent 100%
   );
-  box-shadow: 0 0 12px color-mix(in srgb, var(--color-khaki) 45%, transparent);
+  box-shadow:
+    0 0 20px color-mix(in srgb, var(--color-khaki) 38%, transparent),
+    0 0 2px color-mix(in srgb, var(--color-khaki) 55%, transparent);
   z-index: 2;
   pointer-events: none;
-  opacity: 0.92;
+  opacity: 0.95;
+}
+
+.roll-read-rail::before,
+.roll-read-rail::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 3px;
+  height: 0.65rem;
+  margin-top: -0.325rem;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--color-khaki) 88%, var(--color-stone));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--color-khaki) 35%, transparent);
+}
+
+.roll-read-rail::before {
+  left: 0;
+}
+
+.roll-read-rail::after {
+  right: 0;
 }
 
 .roll-viewport {
+  --roll-fs: clamp(1.45rem, min(3.6vw, 2.5rem), 2.5rem);
+  --roll-lh: 1.22;
+  --roll-line-gap: 0.3rem;
+  --roll-pad-y: 0.65rem;
   position: relative;
-  width: min(48rem, 100%);
+  width: min(44rem, 100%);
   flex: 0 0 auto;
-  max-height: calc(4 * 1.22 * clamp(1.65rem, min(4.2vw, 2.85rem), 2.85rem) + 1.5rem);
+  /* README: at most ~4 lines visible */
+  max-height: calc(
+    var(--roll-pad-y) + 4 * (var(--roll-fs) * var(--roll-lh)) + 3 *
+      var(--roll-line-gap) + var(--roll-pad-y)
+  );
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;
   scroll-behavior: auto;
-  padding: 0 clamp(1rem, 3vw, 1.5rem) 0.75rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid color-mix(in srgb, var(--color-stone) 28%, transparent);
-  background: color-mix(in srgb, var(--color-black) 88%, var(--color-jet));
+  scrollbar-color: color-mix(in srgb, var(--color-stone) 55%, transparent)
+    color-mix(in srgb, var(--color-black) 40%, transparent);
+  padding: 0 clamp(1rem, 3vw, 1.35rem) var(--roll-pad-y);
+  border-radius: var(--radius-xl);
+  border: 1px solid color-mix(in srgb, var(--color-stone) 22%, transparent);
+  background: linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--color-jet) 22%, var(--color-black)) 0%,
+      color-mix(in srgb, var(--color-black) 92%, var(--color-jet)) 100%
+    ),
+    var(--color-black);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 6%, transparent),
-    inset 0 -24px 48px -32px black;
+    0 24px 56px -36px black,
+    inset 0 1px 0 color-mix(in srgb, white 5%, transparent);
   mask-image: linear-gradient(
     to bottom,
     transparent,
-    black 3%,
-    black 97%,
+    black 6%,
+    black 94%,
     transparent
   );
 }
 
+.roll-viewport:focus {
+  outline: none;
+}
+
+.roll-viewport:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-khaki) 75%, transparent);
+  outline-offset: 3px;
+}
+
 .roll-scroll {
-  padding-top: 0.75rem;
-  padding-bottom: min(28vh, 10rem);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--roll-line-gap);
+  padding-top: var(--roll-pad-y);
+  padding-bottom: min(20vh, 7rem);
 }
 
 .roll-line {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.35em 0.45em;
-  margin-bottom: 0.55em;
-  font-size: clamp(1.65rem, min(4.2vw, 2.85rem), 2.85rem);
-  line-height: 1.22;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.38em 0.5em;
+  margin: 0;
+  font-size: var(--roll-fs);
+  line-height: var(--roll-lh);
   font-weight: 500;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.018em;
 }
 
 .roll-word {
   display: inline-block;
-  transition: color 0.12s ease, opacity 0.12s ease;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  transition: color 0.12s ease, opacity 0.12s ease, transform 0.12s ease;
 }
 
 .roll-word--past {
@@ -578,23 +647,91 @@ button {
 
 .roll-word--here {
   color: var(--color-khaki);
-  text-shadow: 0 0 14px color-mix(in srgb, var(--color-khaki) 35%, transparent);
+  font-weight: 600;
+  text-shadow: 0 0 18px color-mix(in srgb, var(--color-khaki) 42%, transparent);
 }
 
 .roll-word--ahead {
   color: var(--color-cream);
 }
 
-.roll-hint {
+.roll-guidance {
   flex-shrink: 0;
-  margin: 0;
-  padding: 0.75rem clamp(1rem, 4vw, 1.5rem) 1.1rem;
-  font-size: 0.78rem;
+  margin: 0 auto;
+  padding: 0.75rem clamp(1rem, 4vw, 1.5rem)
+    calc(1rem + env(safe-area-inset-bottom, 0px));
+  padding-left: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-right, 0px));
+  max-width: min(40rem, 100%);
+  width: 100%;
+  font-size: 0.84rem;
   line-height: 1.5;
-  color: color-mix(in srgb, var(--color-khaki) 78%, var(--color-jet));
-  background: color-mix(in srgb, var(--color-jet) 94%, black);
-  border-top: 1px solid color-mix(in srgb, var(--color-stone) 40%, transparent);
+  color: color-mix(in srgb, var(--color-cream) 78%, var(--color-stone));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-jet) 55%, var(--color-black)) 0%,
+    color-mix(in srgb, var(--color-jet) 88%, black) 100%
+  );
+  border-top: 1px solid color-mix(in srgb, var(--color-stone) 35%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 6%, transparent);
+}
+
+.roll-guidance-title {
+  margin: 0 0 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   text-align: center;
+  color: var(--color-khaki);
+}
+
+.roll-guidance-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.roll-guidance-list li {
+  margin: 0;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-black) 32%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-stone) 28%, transparent);
+}
+
+.roll-guidance-label {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+
+.roll-guidance-kbd {
+  margin: 0.65rem 0 0;
+  text-align: center;
+  font-size: 0.78rem;
+  color: color-mix(in srgb, var(--color-cream) 55%, var(--color-stone));
+}
+
+.roll-guidance-kbd kbd {
+  display: inline-block;
+  margin-inline: 0.15rem;
+  padding: 0.12rem 0.45rem;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-cream);
+  background: color-mix(in srgb, var(--color-black) 45%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-stone) 45%, transparent);
+  border-radius: 6px;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--color-black) 50%, transparent);
 }
 
 @media (max-width: 520px) {
@@ -602,8 +739,13 @@ button {
     flex-wrap: wrap;
   }
 
-  .roll-line {
-    font-size: clamp(1.35rem, 5.2vw, 2rem);
+  .roll-toolbar .roll-stop {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .roll-viewport {
+    --roll-fs: clamp(1.2rem, 5.1vw, 1.82rem);
   }
 
   .app-primary:not(:disabled):hover {

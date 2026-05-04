@@ -3,6 +3,45 @@
 
   const WORDS_PER_LINE = 5;
   const TRANSCRIPT_LOOKAHEAD = 48;
+
+  /**
+   * Pack script words into lines of at most `maxPerLine`, preferring breaks
+   * after sentence punctuation so lines read like phrases (README: ~5 words
+   * per line, minimal horizontal eye travel).
+   */
+  function buildTeleprompterLines(words, maxPerLine) {
+    const lines = [];
+    let i = 0;
+    while (i < words.length) {
+      const remaining = words.length - i;
+      let end = i + Math.min(maxPerLine, remaining);
+
+      if (end - i === maxPerLine && end < words.length) {
+        for (let j = i; j < end - 1; j++) {
+          if (/[.!?…]"?$/.test(words[j].display)) {
+            end = j + 1;
+            break;
+          }
+        }
+      }
+
+      if (end === i) end = i + 1;
+      lines.push(words.slice(i, end));
+      i = end;
+    }
+    return lines;
+  }
+
+  function lineIndexForWordIndex(lineStarts, wordIdx) {
+    if (wordIdx < 0 || !lineStarts.length) return 0;
+    for (let li = 0; li < lineStarts.length; li++) {
+      const start = lineStarts[li];
+      const nextStart =
+        li + 1 < lineStarts.length ? lineStarts[li + 1] : Infinity;
+      if (wordIdx < nextStart) return li;
+    }
+    return Math.max(0, lineStarts.length - 1);
+  }
   const SAMPLE =
     "Welcome everyone. Thank you for being here today. We are excited to share what we have been building. This teleprompter listens as you speak and keeps the script in view. Feel free to ad-lib between lines — the scroll catches up when you return to the script.";
 
@@ -188,6 +227,7 @@
   let sessionWords = [];
   let wordSpans = [];
   let lineEls = [];
+  let sessionLineStarts = [];
 
   function updateWordCount() {
     if (!el.wordCount) return;
@@ -219,21 +259,27 @@
     sessionWords = words;
     wordSpans = [];
     lineEls = [];
+    sessionLineStarts = [];
     el.rollScroll.textContent = "";
 
-    for (let i = 0; i < words.length; i += WORDS_PER_LINE) {
+    const lineSlices = buildTeleprompterLines(words, WORDS_PER_LINE);
+    let wordIdx = 0;
+    for (let li = 0; li < lineSlices.length; li++) {
+      const slice = lineSlices[li];
+      sessionLineStarts.push(wordIdx);
+
       const line = document.createElement("div");
       line.className = "roll-line";
       lineEls.push(line);
-      const slice = words.slice(i, i + WORDS_PER_LINE);
+
       for (let j = 0; j < slice.length; j++) {
-        const wordIdx = i + j;
         const span = document.createElement("span");
         span.className = "roll-word roll-word--ahead";
         span.textContent = slice[j].display;
         span.dataset.wordIndex = String(wordIdx);
         wordSpans[wordIdx] = span;
         line.appendChild(span);
+        wordIdx++;
       }
       el.rollScroll.appendChild(line);
     }
@@ -243,7 +289,7 @@
     const view = el.rollViewport;
     const lineEl = lineEls[focusLineIndex];
     if (!view || !lineEl) return;
-    const readBand = view.clientHeight * 0.36;
+    const readBand = view.clientHeight * 0.38;
     const lineRect = lineEl.getBoundingClientRect();
     const viewRect = view.getBoundingClientRect();
     const delta = lineRect.top - viewRect.top - readBand;
@@ -283,7 +329,10 @@
       linesLen === 0
         ? 0
         : Math.min(
-            Math.max(0, Math.floor((matchedCount - 1) / WORDS_PER_LINE)),
+            Math.max(
+              0,
+              lineIndexForWordIndex(sessionLineStarts, matchedCount)
+            ),
             linesLen - 1
           );
     scrollToFocus(focusLineIndex);
@@ -325,6 +374,11 @@
       updateRollUI("");
       requestAnimationFrame(function () {
         updateRollUI("");
+        try {
+          el.rollViewport.focus({ preventScroll: true });
+        } catch {
+          /* ignore */
+        }
       });
     });
     if (!speech.start()) {
@@ -357,6 +411,12 @@
 
     el.btnRead.addEventListener("click", beginRoll);
     el.btnEnd.addEventListener("click", endRoll);
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key !== "Escape") return;
+      if (!document.body.classList.contains("mode-roll")) return;
+      ev.preventDefault();
+      endRoll();
+    });
     el.scriptInput.addEventListener("input", function () {
       updateReadButton();
       setEditorError("");

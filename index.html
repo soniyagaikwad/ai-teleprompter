@@ -65,10 +65,10 @@
                 aria-describedby="btn-read-hint"
               >
                 <span class="app-primary-icon" aria-hidden="true"></span>
-                Read back script
+                Read back Script
               </button>
               <p id="btn-read-hint" class="app-primary-hint">
-                Uses your microphone · works best in Chrome or Edge on desktop
+                Uses your microphone · Please allow access in your browser settings
               </p>
             </footer>
           </div>
@@ -91,7 +91,8 @@
           <div
             id="roll-viewport"
             class="roll-viewport"
-            aria-label="Teleprompter text"
+            tabindex="-1"
+            aria-label="Teleprompter. Align your eyes with the gold reading line; the next word to speak is highlighted in gold."
           >
             <div class="roll-read-zone" aria-hidden="true"></div>
             <div class="roll-read-rail" aria-hidden="true"></div>
@@ -99,10 +100,25 @@
           </div>
         </div>
 
-        <p class="roll-hint">
-          Read at a natural pace. Short ad-libs are skipped until the script
-          matches again. Scroll stays instant so upcoming words stay visible.
-        </p>
+        <aside class="roll-guidance" aria-label="How this teleprompter behaves">
+          <p class="roll-guidance-title">Read along the gold line</p>
+          <ul class="roll-guidance-list">
+            <li>
+              <span class="roll-guidance-label">Latency</span>
+              Large type, about five words per line and at most four lines on
+              screen — so upcoming words stay visible with little eye travel.
+            </li>
+            <li>
+              <span class="roll-guidance-label">Going off script</span>
+              Ad-libs, rephrasing, or missed words are fine; matching resumes
+              when your speech aligns with the script again, and the view jumps
+              so the next line stays in view.
+            </li>
+          </ul>
+          <p class="roll-guidance-kbd">
+            <kbd>Esc</kbd> ends the session
+          </p>
+        </aside>
       </div>
     </div>
 
