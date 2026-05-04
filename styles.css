@@ -279,6 +279,14 @@ button {
   }
 }
 
+@media (max-width: 539px) {
+  .app-primary-hint {
+    margin-inline-start: auto;
+    width: fit-content;
+    max-width: 100%;
+  }
+}
+
 .app-primary {
   cursor: pointer;
   border: none;
@@ -330,6 +338,7 @@ button {
   margin: 0;
   font-size: 0.82rem;
   line-height: 1.45;
+  text-align: right;
   color: color-mix(in srgb, var(--color-stone) 88%, var(--color-jet));
   max-width: 22rem;
 }
