@@ -1,0 +1,125 @@
+.app-shell {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+.app-main {
+  width: min(52rem, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.app-hero {
+  margin-bottom: 0.35rem;
+}
+
+.app-title {
+  margin: 0 0 0.4rem;
+  font-size: clamp(1.85rem, 4vw, 2.45rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--color-jet);
+}
+
+.app-lede {
+  margin: 0;
+  max-width: 46rem;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--color-stone);
+}
+
+.app-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-stone);
+  margin-top: 0.35rem;
+}
+
+.app-textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 14rem;
+  padding: 1rem 1.1rem;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--color-jet);
+  background: color-mix(in srgb, white 55%, var(--color-cream));
+  border: 1px solid color-mix(in srgb, var(--color-khaki) 65%, var(--color-jet));
+  border-radius: 10px;
+  box-shadow: inset 0 1px 2px
+    color-mix(in srgb, var(--color-jet) 6%, transparent);
+}
+
+.app-textarea::placeholder {
+  color: color-mix(in srgb, var(--color-stone) 55%, transparent);
+}
+
+.app-textarea:focus {
+  outline: none;
+  border-color: var(--color-stone);
+  box-shadow:
+    inset 0 1px 2px color-mix(in srgb, var(--color-jet) 6%, transparent),
+    0 0 0 3px color-mix(in srgb, var(--color-khaki) 45%, transparent);
+}
+
+.app-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.app-primary {
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  padding: 0.85rem 1.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--color-cream);
+  background: var(--color-stone);
+  box-shadow: 0 2px 0 var(--color-black);
+}
+
+.app-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  box-shadow: none;
+}
+
+.app-primary:not(:disabled):hover {
+  filter: brightness(1.06);
+}
+
+.app-primary:not(:disabled):focus-visible {
+  outline: 2px solid var(--color-jet);
+  outline-offset: 3px;
+}
+
+.app-banner {
+  margin: 0.25rem 0 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.app-banner--warn {
+  background: color-mix(in srgb, var(--color-khaki) 28%, var(--color-cream));
+  color: var(--color-jet);
+  border: 1px solid color-mix(in srgb, var(--color-khaki) 55%, var(--color-jet));
+}
+
+.app-banner--error {
+  background: color-mix(in srgb, #c44 12%, var(--color-cream));
+  color: var(--color-jet);
+  border: 1px solid color-mix(in srgb, #c44 35%, var(--color-khaki));
+}

@@ -1,0 +1,172 @@
+.roll-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--color-black);
+  color: var(--color-cream);
+}
+
+.roll-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-jet);
+  border-bottom: 1px solid var(--color-stone);
+  flex-shrink: 0;
+}
+
+.roll-status {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.9rem;
+  color: var(--color-khaki);
+}
+
+.roll-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--color-stone);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.roll-dot--on {
+  background: var(--color-khaki);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-khaki) 35%, transparent);
+}
+
+.roll-status-text {
+  color: var(--color-cream);
+  font-weight: 500;
+}
+
+.roll-progress {
+  margin-left: 0.5rem;
+  opacity: 0.85;
+}
+
+.roll-stop {
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: var(--color-stone);
+  color: var(--color-cream);
+}
+
+.roll-stop:hover {
+  filter: brightness(1.08);
+}
+
+.roll-stop:focus-visible {
+  outline: 2px solid var(--color-khaki);
+  outline-offset: 2px;
+}
+
+.roll-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0 0.75rem;
+}
+
+.roll-read-rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 36%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-khaki) 12%,
+    var(--color-khaki) 88%,
+    transparent
+  );
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.roll-viewport {
+  position: relative;
+  width: min(48rem, 100%);
+  flex: 0 0 auto;
+  /* ~4 lines at the current line font size (see .roll-line) */
+  max-height: calc(4 * 1.22 * clamp(1.65rem, min(4.2vw, 2.85rem), 2.85rem) + 1.5rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: auto;
+  padding: 0 1.5rem 2rem;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+
+.roll-scroll {
+  padding-top: 22vh;
+  padding-bottom: 40vh;
+}
+
+.roll-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35em 0.45em;
+  margin-bottom: 0.55em;
+  font-size: clamp(1.65rem, min(4.2vw, 2.85rem), 2.85rem);
+  line-height: 1.22;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.roll-word {
+  display: inline-block;
+  transition: color 0.12s ease, opacity 0.12s ease;
+}
+
+.roll-word--past {
+  color: color-mix(in srgb, var(--color-cream) 42%, var(--color-stone));
+}
+
+.roll-word--here {
+  color: var(--color-khaki);
+  text-shadow: 0 0 1px color-mix(in srgb, var(--color-khaki) 40%, transparent);
+}
+
+.roll-word--ahead {
+  color: var(--color-cream);
+}
+
+.roll-hint {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0.65rem 1.25rem 1rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--color-khaki) 80%, var(--color-jet));
+  background: var(--color-jet);
+  border-top: 1px solid var(--color-stone);
+}
+
+@media (max-width: 520px) {
+  .roll-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .roll-line {
+    font-size: clamp(1.35rem, 5.2vw, 2rem);
+  }
+}
