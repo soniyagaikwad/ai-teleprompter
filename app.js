@@ -2,7 +2,16 @@
   "use strict";
 
   const WORDS_PER_LINE = 5;
-  const TRANSCRIPT_LOOKAHEAD = 48;
+
+  /** Last aligned script cursor (index of “here” word); stabilizes ties in tail DP. */
+  let rollSpeechCursorHint = 0;
+
+  /** Recent transcript tokens aligned to script (handles ad-libs, skips, jump-back). */
+  const TAIL_ALIGN_LEN = 96;
+  const MATCH_SCORE = 6;
+  const SKIP_SPOKEN_SCORE = -0.22;
+  const SKIP_SCRIPT_SCORE = -3.4;
+  const DP_NEG = -1e15;
 
   /**
    * Pack script words into lines of at most `maxPerLine`, preferring breaks
@@ -102,23 +111,92 @@
     return levenshtein(scriptTok, spokenTok) <= maxDist;
   }
 
-  function countMatchedScriptWords(scriptWords, spokenWords, lookahead) {
-    let t = 0;
-    let matched = 0;
-    for (let s = 0; s < scriptWords.length; s++) {
-      const limit = Math.min(t + lookahead, spokenWords.length);
-      let found = false;
-      for (let k = t; k < limit; k++) {
-        if (tokensFuzzyEqual(scriptWords[s], spokenWords[k])) {
-          t = k + 1;
-          matched = s + 1;
-          found = true;
-          break;
+  /**
+   * ASR-tolerant match (proper nouns, truncation): extends fuzzy equality with
+   * prefix overlap and larger edit budgets on long tokens.
+   */
+  function tokensRelaxedMatch(scriptTok, spokenTok) {
+    if (tokensFuzzyEqual(scriptTok, spokenTok)) return true;
+    if (!scriptTok || !spokenTok) return false;
+    const s = scriptTok;
+    const t = spokenTok;
+    const minLen = Math.min(s.length, t.length);
+    if (minLen >= 5) {
+      if (s.startsWith(t) || t.startsWith(s)) return true;
+      if (minLen >= 6) {
+        const short = s.length <= t.length ? s : t;
+        const long = s.length <= t.length ? t : s;
+        if (short.length >= 8 && long.includes(short)) return true;
+      }
+    }
+    const L = Math.max(s.length, t.length);
+    if (L >= 10) {
+      const d = levenshtein(s, t);
+      const maxDist = L <= 14 ? 4 : L <= 20 ? 5 : 6;
+      return d <= maxDist;
+    }
+    return false;
+  }
+
+  /**
+   * Tail-anchored alignment: DP over the last `TAIL_ALIGN_LEN` spoken tokens vs
+   * full script. Any script start is allowed (jump-in / jump-back); extra
+   * spoken tokens (ad-lib) and skipped script words are penalized. Returns the
+   * script index of the “here” word (count of past words).
+   */
+  function tailAnchoredScriptCursor(scriptNorm, spokenNorm, hint) {
+    const N = scriptNorm.length;
+    const hintJ = Math.max(0, Math.min(hint | 0, N));
+    if (!N) return 0;
+    if (!spokenNorm.length) return 0;
+
+    const tailTake = Math.min(spokenNorm.length, TAIL_ALIGN_LEN);
+    const tailStart = spokenNorm.length - tailTake;
+    const T = tailTake;
+
+    let prev = new Float64Array(N + 1);
+    let cur = new Float64Array(N + 1);
+    for (let j = 0; j <= N; j++) prev[j] = 0;
+
+    for (let ti = 0; ti < T; ti++) {
+      const tok = spokenNorm[tailStart + ti];
+      cur.fill(DP_NEG);
+
+      for (let j = 0; j <= N; j++) {
+        const v = prev[j] + SKIP_SPOKEN_SCORE;
+        if (v > cur[j]) cur[j] = v;
+      }
+      for (let j = 0; j < N; j++) {
+        if (tokensRelaxedMatch(scriptNorm[j], tok)) {
+          const v = prev[j] + MATCH_SCORE;
+          if (v > cur[j + 1]) cur[j + 1] = v;
         }
       }
-      if (!found) break;
+      for (let j = 1; j <= N; j++) {
+        const v = cur[j - 1] + SKIP_SCRIPT_SCORE;
+        if (v > cur[j]) cur[j] = v;
+      }
+
+      const swap = prev;
+      prev = cur;
+      cur = swap;
     }
-    return matched;
+
+    let best = DP_NEG;
+    let bestJ = hintJ;
+    for (let j = 0; j <= N; j++) {
+      const v = prev[j];
+      if (v > best) {
+        best = v;
+        bestJ = j;
+      } else if (v === best && v > DP_NEG + 1) {
+        const da = Math.abs(j - hintJ);
+        const db = Math.abs(bestJ - hintJ);
+        if (da < db || (da === db && j > bestJ)) bestJ = j;
+      }
+    }
+    if (best <= DP_NEG + 1) return hintJ;
+    return bestJ;
   }
 
   function getRecognitionCtor() {
@@ -300,6 +378,7 @@
   }
 
   function renderRoll(words) {
+    rollSpeechCursorHint = 0;
     sessionWords = words;
     wordSpans = [];
     lineEls = [];
@@ -344,11 +423,12 @@
   function updateRollUI(transcript) {
     const normWords = sessionWords.map((w) => w.norm);
     const spoken = tokenizeTranscript(transcript);
-    const matchedCount = countMatchedScriptWords(
+    const matchedCount = tailAnchoredScriptCursor(
       normWords,
       spoken,
-      TRANSCRIPT_LOOKAHEAD
+      rollSpeechCursorHint
     );
+    rollSpeechCursorHint = matchedCount;
 
     for (let i = 0; i < wordSpans.length; i++) {
       const span = wordSpans[i];
