@@ -43,7 +43,7 @@
     return Math.max(0, lineStarts.length - 1);
   }
   const SAMPLE =
-    "Welcome everyone. Thank you for being here today. We are excited to share what we have been building. This teleprompter listens as you speak and keeps the script in view. Feel free to ad-lib between lines — the scroll catches up when you return to the script.";
+    "Welcome everyone. Thank you for being here today. We are excited to share what we have been building. This teleprompter listens as you speak and keeps the script in view. Feel free to ad-lib between lines, and the scroll catches up when you return to the script.";
 
   function normalizeToken(raw) {
     return raw
@@ -208,12 +208,15 @@
     },
   };
 
+  const ROLL_THEME_KEY = "aiTeleprompterRollTheme";
+
   const el = {
     screenEditor: document.getElementById("screen-editor"),
     screenRoll: document.getElementById("screen-roll"),
     scriptInput: document.getElementById("script-input"),
     wordCount: document.getElementById("word-count"),
     btnRead: document.getElementById("btn-read"),
+    btnRollTheme: document.getElementById("btn-roll-theme"),
     btnEnd: document.getElementById("btn-end"),
     bannerUnsupported: document.getElementById("banner-unsupported"),
     bannerError: document.getElementById("banner-error"),
@@ -228,6 +231,47 @@
   let wordSpans = [];
   let lineEls = [];
   let sessionLineStarts = [];
+
+  function getStoredRollTheme() {
+    try {
+      const v = localStorage.getItem(ROLL_THEME_KEY);
+      if (v === "light" || v === "dark") return v;
+    } catch (e) {
+      /* ignore */
+    }
+    return "dark";
+  }
+
+  function applyRollTheme(theme) {
+    const root = el.screenRoll;
+    if (!root) return;
+    const light = theme === "light";
+    root.classList.toggle("roll-root--light", light);
+    const btn = el.btnRollTheme;
+    if (!btn) return;
+    btn.setAttribute("aria-pressed", light ? "true" : "false");
+    btn.setAttribute(
+      "aria-label",
+      light
+        ? "Reading theme is light. Switch to dark theme for the teleprompter."
+        : "Reading theme is dark. Switch to light theme for the teleprompter."
+    );
+    btn.title = light
+      ? "Switch to dark theme"
+      : "Switch to light theme";
+  }
+
+  function toggleRollTheme() {
+    const next = el.screenRoll.classList.contains("roll-root--light")
+      ? "dark"
+      : "light";
+    applyRollTheme(next);
+    try {
+      localStorage.setItem(ROLL_THEME_KEY, next);
+    } catch (e) {
+      /* ignore */
+    }
+  }
 
   function updateWordCount() {
     if (!el.wordCount) return;
@@ -409,7 +453,11 @@
     speech.onTranscript = function () {};
     speech.onError = function () {};
 
+    applyRollTheme(getStoredRollTheme());
     el.btnRead.addEventListener("click", beginRoll);
+    if (el.btnRollTheme) {
+      el.btnRollTheme.addEventListener("click", toggleRollTheme);
+    }
     el.btnEnd.addEventListener("click", endRoll);
     document.addEventListener("keydown", function (ev) {
       if (ev.key !== "Escape") return;

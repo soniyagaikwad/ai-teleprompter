@@ -388,18 +388,90 @@ button {
   border: 1px solid color-mix(in srgb, #c44 32%, var(--color-khaki));
 }
 
+/* Teleprompter only: dark default, optional light — tokens tuned for WCAG AA text & UI contrast */
 .roll-root {
+  color-scheme: dark;
+  --roll-fg: #f2ebe5;
+  --roll-fg-dim: #b5aea4;
+  --roll-fg-current: #e9d5b8;
+  --roll-page-bg: #0a0908;
+  --roll-page-glow: #1c2830;
+  --roll-toolbar-bg: #171c20;
+  --roll-toolbar-border: rgba(200, 190, 180, 0.32);
+  --roll-pill-bg: rgba(18, 18, 20, 0.88);
+  --roll-pill-border: rgba(190, 180, 170, 0.4);
+  --roll-progress-chip-bg: #252b32;
+  --roll-progress-fg: #e4cfae;
+  --roll-btn-fg: #f4efe8;
+  --roll-btn-bg: rgba(32, 32, 36, 0.95);
+  --roll-btn-border: rgba(200, 190, 180, 0.45);
+  --roll-btn-hover-bg: rgba(95, 85, 76, 0.42);
+  --roll-btn-hover-border: rgba(220, 200, 170, 0.55);
+  --roll-viewport-bg: #0e1215;
+  --roll-viewport-bg2: #060809;
+  --roll-viewport-border: rgba(200, 190, 180, 0.26);
+  --roll-viewport-inset: rgba(255, 255, 255, 0.06);
+  --roll-viewport-shadow: rgba(0, 0, 0, 0.55);
+  --roll-scrollbar-thumb: rgba(190, 180, 170, 0.42);
+  --roll-scrollbar-track: rgba(24, 26, 28, 0.55);
+  --roll-word-ahead: var(--roll-fg);
+  --roll-word-past: var(--roll-fg-dim);
+  --roll-word-here: var(--roll-fg-current);
+  --roll-here-glow: rgba(220, 195, 150, 0.35);
+  --roll-focus-ring: #e0c9a0;
+  --roll-dot-off: #8f8478;
+  --roll-dot-on: #e8d4b4;
+  --roll-dot-pulse: rgba(220, 200, 170, 0.28);
+  --roll-dot-pulse-mid: rgba(220, 200, 170, 0.14);
+
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  color: var(--color-cream);
-  background: radial-gradient(
+  color: var(--roll-fg);
+  background:
+    radial-gradient(
       ellipse 120% 80% at 50% 0%,
-      color-mix(in srgb, var(--color-jet) 55%, var(--color-black)) 0%,
-      var(--color-black) 55%
+      var(--roll-page-glow) 0%,
+      transparent 55%
     ),
-    var(--color-black);
+    var(--roll-page-bg);
+}
+
+.roll-root.roll-root--light {
+  color-scheme: light;
+  --roll-fg: #121820;
+  --roll-fg-dim: #4a5563;
+  --roll-fg-current: #5c3000;
+  --roll-page-bg: #e6e2da;
+  --roll-page-glow: #d8d3c9;
+  --roll-toolbar-bg: #dcd6ce;
+  --roll-toolbar-border: rgba(70, 65, 58, 0.28);
+  --roll-pill-bg: #f2efe9;
+  --roll-pill-border: rgba(60, 55, 50, 0.35);
+  --roll-progress-chip-bg: #e0dbd4;
+  --roll-progress-fg: #3d2808;
+  --roll-btn-fg: #101418;
+  --roll-btn-bg: #f4f1ec;
+  --roll-btn-border: rgba(55, 50, 45, 0.45);
+  --roll-btn-hover-bg: #e8e3dc;
+  --roll-btn-hover-border: rgba(55, 50, 45, 0.55);
+  --roll-viewport-bg: #faf9f7;
+  --roll-viewport-bg2: #f0ebe4;
+  --roll-viewport-border: rgba(55, 50, 45, 0.22);
+  --roll-viewport-inset: rgba(255, 255, 255, 0.65);
+  --roll-viewport-shadow: rgba(0, 0, 0, 0.12);
+  --roll-scrollbar-thumb: rgba(70, 65, 58, 0.38);
+  --roll-scrollbar-track: rgba(230, 226, 218, 0.9);
+  --roll-word-ahead: var(--roll-fg);
+  --roll-word-past: var(--roll-fg-dim);
+  --roll-word-here: var(--roll-fg-current);
+  --roll-here-glow: rgba(120, 70, 20, 0.18);
+  --roll-focus-ring: #1a4480;
+  --roll-dot-off: #6b6560;
+  --roll-dot-on: #8a4a08;
+  --roll-dot-pulse: rgba(138, 74, 8, 0.28);
+  --roll-dot-pulse-mid: rgba(138, 74, 8, 0.12);
 }
 
 .roll-toolbar {
@@ -411,11 +483,19 @@ button {
     clamp(1rem, 4vw, 1.5rem) 0.85rem;
   padding-left: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-left, 0px));
   padding-right: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-right, 0px));
-  background: color-mix(in srgb, var(--color-jet) 88%, black);
+  background: var(--roll-toolbar-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-stone) 55%, transparent);
+  border-bottom: 1px solid var(--roll-toolbar-border);
   flex-shrink: 0;
+}
+
+.roll-toolbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .roll-status-pill {
@@ -424,9 +504,9 @@ button {
   gap: 0.6rem;
   flex-wrap: wrap;
   padding: 0.35rem 0.65rem 0.35rem 0.45rem;
-  background: color-mix(in srgb, var(--color-black) 35%, transparent);
+  background: var(--roll-pill-bg);
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--color-stone) 45%, transparent);
+  border: 1px solid var(--roll-pill-border);
   font-size: 0.88rem;
 }
 
@@ -434,26 +514,26 @@ button {
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 50%;
-  background: var(--color-stone);
+  background: var(--roll-dot-off);
   flex-shrink: 0;
   transition: background var(--dur) var(--ease-out),
     box-shadow var(--dur) var(--ease-out);
 }
 
 .roll-dot--on {
-  background: var(--color-khaki);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-khaki) 32%, transparent);
+  background: var(--roll-dot-on);
+  box-shadow: 0 0 0 3px var(--roll-dot-pulse);
   animation: roll-pulse 1.6s ease-in-out infinite;
 }
 
 @keyframes roll-pulse {
   50% {
-    box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-khaki) 18%, transparent);
+    box-shadow: 0 0 0 5px var(--roll-dot-pulse-mid);
   }
 }
 
 .roll-status-text {
-  color: var(--color-cream);
+  color: var(--roll-fg);
   font-weight: 600;
   font-size: 0.86rem;
 }
@@ -462,42 +542,67 @@ button {
   margin-left: 0.15rem;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--color-jet) 70%, var(--color-black));
+  background: var(--roll-progress-chip-bg);
 }
 
 .roll-progress {
   font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--color-khaki);
+  font-weight: 600;
+  color: var(--roll-progress-fg);
   font-variant-numeric: tabular-nums;
 }
 
+.roll-theme,
 .roll-stop {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid color-mix(in srgb, var(--color-stone) 55%, transparent);
+  border: 1px solid var(--roll-btn-border);
   border-radius: 999px;
-  padding: 0.55rem 1.1rem;
+  padding: 0.55rem 1.05rem;
   min-height: 2.75rem;
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  color: color-mix(in srgb, var(--color-cream) 88%, var(--color-stone));
-  background: color-mix(in srgb, var(--color-black) 28%, transparent);
+  color: var(--roll-btn-fg);
+  background: var(--roll-btn-bg);
   transition: background var(--dur) var(--ease-out),
     border-color var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
 }
 
-.roll-stop:hover {
-  background: color-mix(in srgb, var(--color-stone) 28%, transparent);
-  border-color: color-mix(in srgb, var(--color-khaki) 42%, var(--color-stone));
-  color: var(--color-cream);
+.roll-theme {
+  padding-inline: 0.65rem;
+  min-width: 2.75rem;
 }
 
+.roll-theme-icon {
+  display: block;
+  width: 1.375rem;
+  height: 1.375rem;
+  flex-shrink: 0;
+}
+
+.roll-root:not(.roll-root--light) .roll-theme-icon--moon,
+.roll-root.roll-root--light .roll-theme-icon--sun {
+  display: none;
+}
+
+.roll-theme:hover,
+.roll-stop:hover {
+  background: var(--roll-btn-hover-bg);
+  border-color: var(--roll-btn-hover-border);
+  color: var(--roll-btn-fg);
+}
+
+.roll-theme:focus-visible,
 .roll-stop:focus-visible {
-  outline: 2px solid var(--color-khaki);
+  outline: 3px solid var(--roll-focus-ring);
   outline-offset: 2px;
+}
+
+.roll-stop {
+  padding-inline: 1.1rem;
+  font-size: 0.84rem;
 }
 
 .roll-stage {
@@ -518,7 +623,7 @@ button {
   --roll-line-gap: 0.32rem;
   --roll-pad-y: 0.5rem;
   /* Toolbar + stage padding + slack for wrapped toolbar on small screens */
-  --roll-chrome-y: calc(6.05rem + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
+  --roll-chrome-y: calc(6.35rem + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
   --roll-fs-fit: max(
     1.52rem,
     calc(
@@ -542,20 +647,19 @@ button {
   overflow-y: auto;
   overflow-x: auto;
   scroll-behavior: auto;
-  scrollbar-color: color-mix(in srgb, var(--color-stone) 55%, transparent)
-    color-mix(in srgb, var(--color-black) 40%, transparent);
+  scrollbar-color: var(--roll-scrollbar-thumb) var(--roll-scrollbar-track);
   padding: 0 clamp(0.85rem, 3.5vw, 2rem) var(--roll-pad-y);
   border-radius: var(--radius-xl);
-  border: 1px solid color-mix(in srgb, var(--color-stone) 22%, transparent);
+  border: 1px solid var(--roll-viewport-border);
   background: linear-gradient(
       165deg,
-      color-mix(in srgb, var(--color-jet) 22%, var(--color-black)) 0%,
-      color-mix(in srgb, var(--color-black) 92%, var(--color-jet)) 100%
+      var(--roll-viewport-bg) 0%,
+      var(--roll-viewport-bg2) 100%
     ),
-    var(--color-black);
+    var(--roll-viewport-bg2);
   box-shadow:
-    0 24px 56px -36px black,
-    inset 0 1px 0 color-mix(in srgb, white 5%, transparent);
+    0 24px 56px -36px var(--roll-viewport-shadow),
+    inset 0 1px 0 var(--roll-viewport-inset);
   mask-image: linear-gradient(
     to bottom,
     transparent,
@@ -570,7 +674,7 @@ button {
 }
 
 .roll-viewport:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--color-khaki) 75%, transparent);
+  outline: 3px solid var(--roll-focus-ring);
   outline-offset: 3px;
 }
 
@@ -604,17 +708,17 @@ button {
 }
 
 .roll-word--past {
-  color: color-mix(in srgb, var(--color-cream) 38%, var(--color-stone));
+  color: var(--roll-word-past);
 }
 
 .roll-word--here {
-  color: var(--color-khaki);
+  color: var(--roll-word-here);
   font-weight: 600;
-  text-shadow: 0 0 18px color-mix(in srgb, var(--color-khaki) 42%, transparent);
+  text-shadow: 0 0 16px var(--roll-here-glow);
 }
 
 .roll-word--ahead {
-  color: var(--color-cream);
+  color: var(--roll-word-ahead);
 }
 
 @media (max-width: 520px) {
@@ -622,14 +726,21 @@ button {
     flex-wrap: wrap;
   }
 
-  .roll-toolbar .roll-stop {
+  .roll-toolbar-actions {
     flex: 1 1 100%;
     max-width: 100%;
+    justify-content: stretch;
+  }
+
+  .roll-toolbar-actions .roll-theme,
+  .roll-toolbar-actions .roll-stop {
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .roll-viewport {
     --roll-chrome-y: calc(
-      8.75rem + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)
+      9.25rem + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)
     );
   }
 

@@ -84,14 +84,56 @@
               <span id="roll-progress" class="roll-progress" aria-live="polite"></span>
             </span>
           </div>
-          <button
-            type="button"
-            id="btn-end"
-            class="roll-stop"
-            title="Press Esc to end session"
-          >
-            End session
-          </button>
+          <div class="roll-toolbar-actions">
+            <button
+              type="button"
+              id="btn-roll-theme"
+              class="roll-theme"
+              aria-pressed="false"
+              title="Switch to light theme"
+              aria-label="Reading theme is dark. Switch to light theme for the teleprompter."
+            >
+              <svg
+                class="roll-theme-icon roll-theme-icon--sun"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <svg
+                class="roll-theme-icon roll-theme-icon--moon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              id="btn-end"
+              class="roll-stop"
+              title="Press Esc to end session"
+            >
+              End session
+            </button>
+          </div>
         </header>
 
         <div class="roll-stage">
