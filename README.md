@@ -1,33 +1,60 @@
 # AI Teleprompter
 
-## Your Task
-- We want you to build a AI teleprompter web app.
-- Teleprompters show a script in large text so they are easy to read back, and they typically scroll at a constant pace.
-- We want you to build a teleprompter that scrolls automatically as you are reading it back.
-- Within reason, we are not cost-sensitive, we want the absolute best user experience.
-- What the app might look like:
-    - You have a text box where you can write a script or paste one in.
-    - There’s a “Read back Script” button.
-    - When you hit that button, then you display the script in large text. As you read out the script, the script should scroll as you are reading the script (i.e. by transcribing your speech).
+A fast, speech-synced teleprompter for reading scripts out loud. Paste your script, start a read-back session, and the prompter keeps the next lines in view while tracking what you’re saying (including light paraphrasing and short tangents).
 
 ![AI Teleprompter](ai-teleprompter-example.jpeg)
 
-## Some tricky parts
+## Features
 
-- There are two big tricky parts here:
-    - Latency
-    - Support going-off-script
-- Your solution should try to support both.
+- **Speech-synced scrolling**: highlights the next word and scrolls as you speak.
+- **Readable prompter layout**: large text, limited lines, minimal eye travel.
+- **Session controls**: start read-back, end session, and switch reading theme.
+- **Runs locally**: plain HTML/CSS/JS — no build step required.
 
-**Latency**
+## Quick start
 
-- This is a very latency sensitive experience – as you read back at normal speed, the upcoming text should always be visible.
-- The text in the teleprompter should be large – e.g. only ~5 words per line (so that your eyes don’t move too far horizontally)
-- You can only have a max ~4 lines on the screen at once (otherwise your eyes will move too much vertically).
+### 1) Run locally
 
-**Going-off-script**
+Speech recognition typically requires the page to be served over `http://localhost` (opening `index.html` via `file://` often blocks mic/speech APIs).
 
-- Critically, users also may not *perfectly* read back the script.
-- They might ad-lib or interject phrases or sentences that are not in the original script.
-- They might rephrase words or sentences heavily as they go.
-- They might miss words out or mispronounce words.
+From the repo root:
+
+```bash
+python3 -m http.server 8000
+```
+
+Then open `http://localhost:8000` in your browser.
+
+### 2) Use the app
+
+- **Paste or write** your script in the “Your script” box.
+- Click **Read back script**.
+- When prompted, **allow microphone access**.
+- Start reading — the prompter will follow along and scroll to keep upcoming text visible.
+
+## Browser support
+
+- **Recommended**: latest Chrome or Edge (desktop).
+- If you see “Speech recognition is not available in this browser”, switch to Chrome/Edge.
+
+## Tips for best results
+
+- **Use a decent mic** and a quiet room for fewer recognition errors.
+- **Add punctuation** to your script — it improves pacing and matching.
+- If you tend to ad-lib, **keep tangents short**; the prompter will generally recover when you return to the script.
+
+## Troubleshooting
+
+- **Mic permission denied**: check your browser site settings for `http://localhost:8000` and allow Microphone.
+- **Nothing happens when starting**: confirm you’re not using a `file://` URL; run a local server as above.
+- **Recognition stops mid-session**: some browsers pause recognition after silence — try speaking a bit louder/closer to the mic, or restart the session.
+
+## Project layout
+
+- `index.html`: app shell + UI structure
+- `styles.css`: styling for editor + reading mode
+- `app.js`: app logic (speech recognition + scrolling/highlighting)
+
+## Specs / original prompt
+
+The original product spec is preserved in `ai-teleprompter-specs.md`.
