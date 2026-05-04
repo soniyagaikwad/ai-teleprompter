@@ -492,85 +492,38 @@ button {
 }
 
 .roll-stage {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0.65rem max(0.75rem, env(safe-area-inset-left, 0px)) 0.85rem
-    max(0.75rem, env(safe-area-inset-right, 0px));
-}
-
-.roll-read-zone {
-  position: absolute;
-  inset-inline: clamp(0.75rem, 3vw, 1.25rem);
-  top: 30%;
-  height: 24%;
-  border-radius: var(--radius-md);
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--color-khaki) 4%, transparent),
-    color-mix(in srgb, var(--color-khaki) 10%, transparent) 50%,
-    color-mix(in srgb, var(--color-khaki) 4%, transparent)
-  );
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-khaki) 14%, transparent);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.roll-read-rail {
-  position: absolute;
-  left: 50%;
-  top: 38%;
-  transform: translate(-50%, -50%);
-  width: min(32rem, 82%);
-  height: 3px;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    color-mix(in srgb, var(--color-khaki) 35%, transparent) 12%,
-    var(--color-khaki) 50%,
-    color-mix(in srgb, var(--color-khaki) 35%, transparent) 88%,
-    transparent 100%
-  );
-  box-shadow:
-    0 0 20px color-mix(in srgb, var(--color-khaki) 38%, transparent),
-    0 0 2px color-mix(in srgb, var(--color-khaki) 55%, transparent);
-  z-index: 2;
-  pointer-events: none;
-  opacity: 0.95;
-}
-
-.roll-read-rail::before,
-.roll-read-rail::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 3px;
-  height: 0.65rem;
-  margin-top: -0.325rem;
-  border-radius: 2px;
-  background: color-mix(in srgb, var(--color-khaki) 88%, var(--color-stone));
-  box-shadow: 0 0 10px color-mix(in srgb, var(--color-khaki) 35%, transparent);
-}
-
-.roll-read-rail::before {
-  left: 0;
-}
-
-.roll-read-rail::after {
-  right: 0;
+  padding: 0.2rem max(clamp(0.5rem, 2.5vw, 1.75rem), env(safe-area-inset-left, 0px))
+    max(0.35rem, env(safe-area-inset-bottom, 0px))
+    max(clamp(0.5rem, 2.5vw, 1.75rem), env(safe-area-inset-right, 0px));
 }
 
 .roll-viewport {
-  --roll-fs: clamp(1.45rem, min(3.6vw, 2.5rem), 2.5rem);
-  --roll-lh: 1.22;
-  --roll-line-gap: 0.3rem;
-  --roll-pad-y: 0.65rem;
+  /* README: ~5 words/line (JS), at most 4 lines visible — grow type until that window fills the viewport */
+  --roll-lh: 1.18;
+  --roll-line-gap: 0.32rem;
+  --roll-pad-y: 0.5rem;
+  /* Toolbar + stage padding + slack for wrapped toolbar on small screens */
+  --roll-chrome-y: calc(6.05rem + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
+  --roll-fs-fit: max(
+    1.52rem,
+    calc(
+      (100dvh - var(--roll-chrome-y) - 2 * var(--roll-pad-y) - 3 * var(--roll-line-gap)) /
+        (4 * var(--roll-lh))
+    )
+  );
+  /* Slightly larger than before; min(..., fit) keeps four lines on-screen without maxing every dvh */
+  --roll-fs: min(
+    clamp(1.65rem, min(7.8vw, 1.16rem + 3.25vmin), 5.95rem),
+    var(--roll-fs-fit)
+  );
   position: relative;
-  width: min(44rem, 100%);
+  width: min(100%, 68rem);
   flex: 0 0 auto;
   /* README: at most ~4 lines visible */
   max-height: calc(
@@ -582,7 +535,7 @@ button {
   scroll-behavior: auto;
   scrollbar-color: color-mix(in srgb, var(--color-stone) 55%, transparent)
     color-mix(in srgb, var(--color-black) 40%, transparent);
-  padding: 0 clamp(1rem, 3vw, 1.35rem) var(--roll-pad-y);
+  padding: 0 clamp(0.85rem, 3.5vw, 2rem) var(--roll-pad-y);
   border-radius: var(--radius-xl);
   border: 1px solid color-mix(in srgb, var(--color-stone) 22%, transparent);
   background: linear-gradient(
@@ -597,8 +550,8 @@ button {
   mask-image: linear-gradient(
     to bottom,
     transparent,
-    black 6%,
-    black 94%,
+    black 3%,
+    black 97%,
     transparent
   );
 }
@@ -618,7 +571,7 @@ button {
   align-items: stretch;
   gap: var(--roll-line-gap);
   padding-top: var(--roll-pad-y);
-  padding-bottom: min(20vh, 7rem);
+  padding-bottom: min(10vh, 4.5rem);
 }
 
 .roll-line {
@@ -655,85 +608,6 @@ button {
   color: var(--color-cream);
 }
 
-.roll-guidance {
-  flex-shrink: 0;
-  margin: 0 auto;
-  padding: 0.75rem clamp(1rem, 4vw, 1.5rem)
-    calc(1rem + env(safe-area-inset-bottom, 0px));
-  padding-left: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-left, 0px));
-  padding-right: max(clamp(1rem, 4vw, 1.5rem), env(safe-area-inset-right, 0px));
-  max-width: min(40rem, 100%);
-  width: 100%;
-  font-size: 0.84rem;
-  line-height: 1.5;
-  color: color-mix(in srgb, var(--color-cream) 78%, var(--color-stone));
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--color-jet) 55%, var(--color-black)) 0%,
-    color-mix(in srgb, var(--color-jet) 88%, black) 100%
-  );
-  border-top: 1px solid color-mix(in srgb, var(--color-stone) 35%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 6%, transparent);
-}
-
-.roll-guidance-title {
-  margin: 0 0 0.55rem;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  text-align: center;
-  color: var(--color-khaki);
-}
-
-.roll-guidance-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-}
-
-.roll-guidance-list li {
-  margin: 0;
-  padding: 0.55rem 0.7rem;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--color-black) 32%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-stone) 28%, transparent);
-}
-
-.roll-guidance-label {
-  display: block;
-  margin-bottom: 0.2rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--color-cream);
-}
-
-.roll-guidance-kbd {
-  margin: 0.65rem 0 0;
-  text-align: center;
-  font-size: 0.78rem;
-  color: color-mix(in srgb, var(--color-cream) 55%, var(--color-stone));
-}
-
-.roll-guidance-kbd kbd {
-  display: inline-block;
-  margin-inline: 0.15rem;
-  padding: 0.12rem 0.45rem;
-  font-family: var(--font-sans);
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--color-cream);
-  background: color-mix(in srgb, var(--color-black) 45%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-stone) 45%, transparent);
-  border-radius: 6px;
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--color-black) 50%, transparent);
-}
-
 @media (max-width: 520px) {
   .roll-toolbar {
     flex-wrap: wrap;
@@ -745,7 +619,9 @@ button {
   }
 
   .roll-viewport {
-    --roll-fs: clamp(1.2rem, 5.1vw, 1.82rem);
+    --roll-chrome-y: calc(
+      8.75rem + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)
+    );
   }
 
   .app-primary:not(:disabled):hover {

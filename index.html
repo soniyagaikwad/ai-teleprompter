@@ -84,7 +84,14 @@
               <span id="roll-progress" class="roll-progress" aria-live="polite"></span>
             </span>
           </div>
-          <button type="button" id="btn-end" class="roll-stop">End session</button>
+          <button
+            type="button"
+            id="btn-end"
+            class="roll-stop"
+            title="Press Esc to end session"
+          >
+            End session
+          </button>
         </header>
 
         <div class="roll-stage">
@@ -92,33 +99,11 @@
             id="roll-viewport"
             class="roll-viewport"
             tabindex="-1"
-            aria-label="Teleprompter. Align your eyes with the gold reading line; the next word to speak is highlighted in gold."
+            aria-label="Teleprompter. The next word to speak is emphasized; past words appear dimmer."
           >
-            <div class="roll-read-zone" aria-hidden="true"></div>
-            <div class="roll-read-rail" aria-hidden="true"></div>
             <div id="roll-scroll" class="roll-scroll"></div>
           </div>
         </div>
-
-        <aside class="roll-guidance" aria-label="How this teleprompter behaves">
-          <p class="roll-guidance-title">Read along the gold line</p>
-          <ul class="roll-guidance-list">
-            <li>
-              <span class="roll-guidance-label">Latency</span>
-              Large type, about five words per line and at most four lines on
-              screen — so upcoming words stay visible with little eye travel.
-            </li>
-            <li>
-              <span class="roll-guidance-label">Going off script</span>
-              Ad-libs, rephrasing, or missed words are fine; matching resumes
-              when your speech aligns with the script again, and the view jumps
-              so the next line stays in view.
-            </li>
-          </ul>
-          <p class="roll-guidance-kbd">
-            <kbd>Esc</kbd> ends the session
-          </p>
-        </aside>
       </div>
     </div>
 
