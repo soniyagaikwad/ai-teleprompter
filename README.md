@@ -76,6 +76,10 @@ Then open `http://localhost:8000` in your browser.
 - **Upload a slide deck and generate a script from the presentation** — slide titles, bullet fragments, and speaker notes are rarely ready to read verbatim; a pipeline could turn them into full sentences with connected thoughts, then feed the same teleprompter UI. That implies owning file parse (e.g. PPTX), optional LLM pass for generation, and guardrails so the on-screen script stays faithful to what the author approved.
 - **Live speaking-rate estimates and pacing feedback** — use the transcript stream (and timestamps if available) to approximate WPM or syllable rate, compare to a target range or rehearsal baseline, then surface gentle nudges (“a little slower”, “you’re ahead of this section”) without fighting the existing alignment logic.
 
+## Demo
+
+To find a demo of *AI Teleprompter*, you can watch the [video on Loom](https://www.loom.com/share/112f72621717495e95b4dac2c0e78115).
+
 ## Specs
 
 The original product spec is preserved in `ai-teleprompter-specs.md`.
