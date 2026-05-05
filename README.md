@@ -35,12 +35,12 @@ Then open `http://localhost:8000` in your browser.
 - When prompted, **allow microphone access**.
 - Start reading — the prompter will follow along and scroll to keep upcoming text visible.
 
-## Browser support
+## Browser Support
 
 - **Recommended**: latest Chrome or Edge (desktop).
 - If you see “Speech recognition is not available in this browser”, switch to Chrome/Edge.
 
-## Tips for best results
+## Tips for Best Results
 
 - **Use a decent mic** and a quiet room for fewer recognition errors.
 - **Add punctuation** to your script — it improves pacing and matching.
