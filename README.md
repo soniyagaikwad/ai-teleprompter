@@ -9,13 +9,12 @@ A fast, speech-synced teleprompter for reading scripts out loud. Paste your scri
 - **Speech-synced scrolling**: highlights the next word and scrolls as you speak.
 - **Readable prompter layout**: large text, limited lines, minimal eye travel.
 - **Session controls**: start read-back, end session, and switch reading theme.
-- **Runs locally**: plain HTML/CSS/JS — no build step required.
 
 ## Quick Start
 
 ### 1) Try it on GitHub Pages
 
-You can use the hosted build on **[GitHub Pages](https://soniyagaikwad.github.io/ai-teleprompter/)**.
+You can use the hosted build on **[GitHub Pages](https://soniyagaikwad.github.io/ai-teleprompter/)**!
 
 ### 2) Run locally
 
@@ -69,10 +68,9 @@ Then open `http://localhost:8000` in your browser.
 
 ## Potential Enhancements
 
-- **Add speaker-aware prompt generation** — use the pasted script plus a short calibration pass (or prior sessions) to rewrite cue lines for how *this* speaker phrases things: shorter clauses, breath marks, optional emphasis words—while keeping lock-step alignment to the canonical script underneath.
-- **Add real-time WPM and delivery-aware pacing** — estimate live speaking rate and variance from the transcript stream, then adjust **scroll lookahead** and “read band” position so fast readers aren’t fighting the scroll and slow readers aren’t losing the next line off the bottom.
-- **Wire ASR confidence and alternatives into alignment** — today the pipeline uses a single hypothesis per chunk; exposing `maxAlternatives` / per-token confidence (where the browser API allows) and folding that into the DP would down-weight flaky tokens and cut cursor jumps on homophones and garbage inserts.
-- **Add rehearsal mode and drift analytics** — a per-session view of where alignment struggled (repeated skips, long off-script spans) to suggest script edits or mic placement, turning the teleprompter into a feedback loop for the talk, not just a mirror.
+- **Upload text documents and extract a script** — supporting `.txt`, `.docx`, or PDF would let people pull a talk straight from notes or a draft without copy-paste friction. The interesting work is layout-aware extraction (headings, slide notes vs body) and a clear preview so users can edit before read-back.
+- **Upload a slide deck and generate a script from the presentation** — slide titles, bullet fragments, and speaker notes are rarely ready to read verbatim; a pipeline could turn them into full sentences with connective tissue, then feed the same teleprompter UI. That implies owning file parse (e.g. PPTX), optional LLM pass for generation, and guardrails so the on-screen script stays faithful to what the author approved.
+- **Live speaking-rate estimates and pacing feedback** — use the transcript stream (and timestamps if available) to approximate WPM or syllable rate, compare to a target range or rehearsal baseline, then surface gentle nudges (“a little slower”, “you’re ahead of this section”) without fighting the existing alignment logic.
 
 ## Specs
 
