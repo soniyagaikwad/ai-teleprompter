@@ -60,7 +60,7 @@ Then open `http://localhost:8000` in your browser.
 
 ## Technical Decisions
 
-- **On-device speech (Web Speech API) instead of hosted automatic speech recognition (ASR) or an LLM** — each browser supplies its own speech-to-text (no separate AI service, no API keys, no uploading your voice to a server). That keeps the loop simple and fast. The tradeoff is practical: it works best in **Chrome or Edge on a desktop**, and you’re tied to however good that built-in dictation is on a given day.
+- **On-device speech (Web Speech API) instead of hosted automatic speech recognition (ASR) or an LLM** — each browser supplies its own speech-to-text (no separate AI service, no API keys, no uploading your voice to a server). That keeps the loop simple and fast. It works best in **Chrome or Edge on a desktop** due to its ASR capabilities, but it also works well on different browsers like Safari.
 
 - **Robust alignment between live transcript and script (non-verbatim read-through)** — in practice, nobody reads every word exactly as written. They paraphrase, skip a word, or toss in a short aside. So instead of hunting for a perfect string match, the app repeatedly asks: *given the latest chunk of transcript, where in the script does that best line up?* It gently penalizes wandering off-script vs skipping ahead in the document, so a brief tangent doesn’t permanently confuse the highlight—and when you return to the script, the prompter can find you again.
 
@@ -73,7 +73,7 @@ Then open `http://localhost:8000` in your browser.
 ## Potential Enhancements
 
 - **Upload text documents and extract a script** — supporting `.txt`, `.docx`, or PDF would let people pull a talk straight from notes or a draft without copy-paste friction. The interesting work is layout-aware extraction (headings, slide notes vs body) and a clear preview so users can edit before read-back.
-- **Upload a slide deck and generate a script from the presentation** — slide titles, bullet fragments, and speaker notes are rarely ready to read verbatim; a pipeline could turn them into full sentences with connective tissue, then feed the same teleprompter UI. That implies owning file parse (e.g. PPTX), optional LLM pass for generation, and guardrails so the on-screen script stays faithful to what the author approved.
+- **Upload a slide deck and generate a script from the presentation** — slide titles, bullet fragments, and speaker notes are rarely ready to read verbatim; a pipeline could turn them into full sentences with connected thoughts, then feed the same teleprompter UI. That implies owning file parse (e.g. PPTX), optional LLM pass for generation, and guardrails so the on-screen script stays faithful to what the author approved.
 - **Live speaking-rate estimates and pacing feedback** — use the transcript stream (and timestamps if available) to approximate WPM or syllable rate, compare to a target range or rehearsal baseline, then surface gentle nudges (“a little slower”, “you’re ahead of this section”) without fighting the existing alignment logic.
 
 ## Specs
