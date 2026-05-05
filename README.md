@@ -60,11 +60,15 @@ Then open `http://localhost:8000` in your browser.
 
 ## Technical Decisions
 
-- **On-device speech (Web Speech API) instead of a hosted ASR or LLM** — keeps the read-back loop fast and simple (no API keys, no audio upload), at the cost of being Chrome/Edge-first and accepting whatever quality the browser’s bundled recognizer delivers.
-- **Tail-anchored dynamic programming for script position, not prompt engineering** — the hard part is that the live transcript rarely matches the script verbatim (missed words, paraphrase, short tangents, ASR errors). The matcher scores the **last ~96 spoken tokens** against the full script with penalties for skipping script words vs skipping “extra” spoken words, so ad-libs don’t permanently derail alignment and the UI can recover when the speaker returns to the script.
-- **ASR-tolerant token matching** — normalized tokens (case/diacritics stripped) plus bounded Levenshtein distance, prefix/substring relaxations on longer tokens, and a **hint** from the last aligned index to break ties so the cursor doesn’t jitter on ambiguous matches.
-- **Interim + continuous recognition** — `interimResults` and a restart-on-`onend` loop so partial transcripts update the prompter quickly; that’s what makes the experience feel “synced” rather than batch-updated on sentence boundaries.
-- **Prompter layout as a product constraint** — about **five words per line** (with breaks favored after sentence punctuation), **at most ~four lines** in view, and a measured **width cap** on font size so lines don’t clip on large or external monitors while still honoring the “large type, little eye travel” spec.
+- **On-device speech (Web Speech API) instead of a hosted ASR or LLM** — use each browser’s own speech-to-text (no separate AI service, no API keys, no uploading your voice to a server). That keeps the loop simple and fast. The tradeoff is practical: it works best in **Chrome or Edge on a desktop**, and you’re tied to however good that built-in dictation is on a given day.
+
+- **Robust alignment between live transcript and script (non-verbatim read-through)** — in practice, nobody reads every word exactly as written. They paraphrase, skip a word, or toss in a short aside. So instead of hunting for a perfect string match, the app repeatedly asks: *given what I just heard you say (roughly the last chunk of transcript), where in the script does that best line up?* It gently penalizes wandering off-script vs skipping ahead in the document, so a brief tangent doesn’t permanently confuse the highlight—and when you return to the script, the prompter can find you again.
+
+- **ASR-tolerant token normalization, fuzzy matching, and cursor tie-breaking** — dictation mangles names and long words; speakers say “don’t” vs “do not.” We normalize text in a boring way (case, accents, punctuation) and allow **near-misses** on spelling, especially on longer tokens. We also remember **where we thought you were last** so that when two parts of the script could both fit, the cursor doesn’t jitter back and forth.
+
+- **Interim speech results and a continuous capture / restart loop for low-latency UI** — the microphone session stays alive, and **partial** phrases update the UI as you go. That’s what makes the scroll feel tied to your mouth instead of waiting until you finish a whole sentence.
+
+- **Line-count / words-per-line constraints with measured horizontal scaling on resize** — the spec called for only a few words per line and only a few lines on screen at once, with breaks after sentences when possible—less eye travel, easier reading. On a laptop that felt great. On a **large or external monitor**, the same rules made the font so tall that a full line of five words could run off the **sides** of the box. We iterated by **measuring the longest line after layout** (and again when the window is resized) and **slightly shrinking the type** only when needed, so lines stay visible everywhere without giving up the “large, comfortable” goal.
 
 ## Potential Enhancements
 
