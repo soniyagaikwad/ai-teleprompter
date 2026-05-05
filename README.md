@@ -60,11 +60,11 @@ Then open `http://localhost:8000` in your browser.
 
 ## Technical Decisions
 
-- **On-device speech (Web Speech API) instead of hosted automatic speech recognition or an LLM** — each browser supplies its own speech-to-text (no separate AI service, no API keys, no uploading your voice to a server). That keeps the loop simple and fast. The tradeoff is practical: it works best in **Chrome or Edge on a desktop**, and you’re tied to however good that built-in dictation is on a given day.
+- **On-device speech (Web Speech API) instead of hosted automatic speech recognition (ASR) or an LLM** — each browser supplies its own speech-to-text (no separate AI service, no API keys, no uploading your voice to a server). That keeps the loop simple and fast. The tradeoff is practical: it works best in **Chrome or Edge on a desktop**, and you’re tied to however good that built-in dictation is on a given day.
 
 - **Robust alignment between live transcript and script (non-verbatim read-through)** — in practice, nobody reads every word exactly as written. They paraphrase, skip a word, or toss in a short aside. So instead of hunting for a perfect string match, the app repeatedly asks: *given the latest chunk of transcript, where in the script does that best line up?* It gently penalizes wandering off-script vs skipping ahead in the document, so a brief tangent doesn’t permanently confuse the highlight—and when you return to the script, the prompter can find you again.
 
-- **Token normalization and fuzzy matching tolerant of automatic speech recognition errors, plus cursor tie-breaking** — dictation mangles names and long words; speakers say “don’t” vs “do not.” Text is normalized in a straightforward way (case, accents, punctuation) and **near-misses** on spelling are allowed, especially on longer tokens. The **last stable alignment position** breaks ties when two parts of the script could both fit, so the cursor doesn’t jitter back and forth.
+- **Token normalization and fuzzy matching tolerant of ASR errors, plus cursor tie-breaking** — dictation mangles names and long words; speakers say “don’t” vs “do not.” Text is normalized in a straightforward way (case, accents, punctuation) and **near-misses** on spelling are allowed, especially on longer tokens. The **last stable alignment position** breaks ties when two parts of the script could both fit, so the cursor doesn’t jitter back and forth.
 
 - **Interim speech results and a continuous capture / restart loop for low-latency UI** — the microphone session stays alive, and **partial** phrases update the UI as you go. That’s what makes the scroll feel tied to your mouth instead of waiting until you finish a whole sentence.
 
